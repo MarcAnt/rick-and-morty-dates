@@ -37,7 +37,7 @@ const Main = () => {
         h={"100vh"}
         paddingX={10}
         borderRight={"1px solid #EA580C"}
-        display={"flex"}
+        display={{ xs: "none", sm: "none", md: "flex", lg: "flex" }}
         flexDirection={"column"}
         justifyContent={"flex-start"}
         alignItems={"stretch"}
@@ -156,7 +156,7 @@ const Main = () => {
             placement="bottom-start"
           >
             <PopoverTrigger>
-              <Button variant={"ghost"}>
+              <Button variant={"ghost"} ml={5}>
                 <Icon as={AiFillControl} w={7} h={7} color={"white"} />
               </Button>
             </PopoverTrigger>

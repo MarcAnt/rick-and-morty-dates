@@ -26,9 +26,18 @@ const colors = {
   },
 };
 
+const breakpoints = {
+  xs: "120px",
+  sm: "320px",
+  md: "768px",
+  lg: "960px",
+  xl: "1200px",
+  "2xl": "1536px",
+};
+
 // Components
 
-const Switch = {
+const Switch: ComponentStyleConfig = {
   variants: {
     base: {},
     brand: {
@@ -46,7 +55,7 @@ const Switch = {
   },
 };
 
-const Input = {
+const Input: ComponentStyleConfig = {
   variants: {
     outline: {
       field: {
@@ -81,7 +90,7 @@ const Input = {
   },
 };
 
-const Button = {
+const Button: ComponentStyleConfig = {
   variants: {
     solid: {
       color: "white",
@@ -123,5 +132,6 @@ export const theme = extendTheme({
   styles,
   colors,
   fonts,
+  breakpoints,
   components: { Button, Switch, Input },
 });

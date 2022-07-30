@@ -13,9 +13,6 @@ function App() {
         justifyContent={"center"}
         alignItems={"center"}
       >
-        {/* <PageNotFound /> */}
-
-        {/* <Login /> */}
         <Main />
       </Box>
     </Box>

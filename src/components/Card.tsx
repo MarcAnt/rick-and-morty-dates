@@ -14,19 +14,22 @@ import { RiAliensFill } from "react-icons/ri";
 import { FaHeart, FaSkull } from "react-icons/fa";
 import { BiX } from "react-icons/bi";
 
-const Card = () => {
+// left: calc(50% - 50px);
+// bottom: -30px;
+
+const Card: React.FC<any> = () => {
   return (
     <Box
       bg={"white"}
       borderRadius={15}
-      // overflow={"hidden"}
       display={"flex"}
+      flexDirection={{ xs: "column", sm: "column", md: "row", lg: "row" }}
       justifyContent={"space-evenly"}
       alignItems={"stretch"}
       h={"450px"}
       maxH={"450px"}
       maxW={"600px"}
-      margin={"1rem auto"}
+      margin={{ xs: "1rem 2rem", sm: "1rem 2rem", md: "1rem auto" }}
       boxShadow={"0 5px 10px #00000052"}
       position={"relative"}
     >
@@ -41,7 +44,6 @@ const Card = () => {
           boxSize="200px"
           src="https://rickandmortyapi.com/api/character/avatar/1.jpeg"
         />
-
         <Box
           position={"absolute"}
           borderRadius="full"
@@ -50,18 +52,20 @@ const Card = () => {
           bg={"brand.primary"}
           w={"60px"}
           h={"60px"}
-          bottom={130}
-          right={10}
+          bottom={{ xs: "10px", sm: "10px", md: "130px" }}
+          transform="translateX(80px)"
         ></Box>
       </Flex>
       <Flex
         bg={"rgba(234, 88, 12, 0.5)"}
         direction={"column"}
-        alignItems={"stretch"}
+        alignItems={{ xs: "center", sm: "center", md: "stretch" }}
         justifyContent={"center"}
         flex={1}
         paddingLeft={5}
-        borderRightRadius={15}
+        borderBottomRightRadius={15}
+        borderTopRightRadius={{ xs: 0, sm: 0, md: 15 }}
+        borderBottomLeftRadius={{ xs: 15, sm: 15, md: 0 }}
       >
         <Heading as={"h2"} color={"brand.primary"} mb={10} fontWeight={"bold"}>
           Rick Sanchez
@@ -85,10 +89,11 @@ const Card = () => {
 
       <Flex
         position={"absolute"}
-        direction={"column"}
+        direction={{ xs: "row", sm: "row", md: "column" }}
         justifyContent={"center"}
         alignItems={"center"}
         bottom={-10}
+        left={{ xs: "calc(50% - 33px)", sm: "calc(50% - 33px)" }}
         gap={3}
       >
         <Box
