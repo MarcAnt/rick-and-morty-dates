@@ -6,7 +6,7 @@ import PageNotFound from "./pages/PageNotFound";
 
 function App() {
   return (
-    <Box maxW={"1440px"}>
+    <Box maxW={"1440px"} margin={"0 auto"}>
       <Box
         display={"flex"}
         flexDirection={"column"}
