@@ -1,6 +1,6 @@
 import {
-  Avatar,
   Box,
+  Button,
   Flex,
   Heading,
   HStack,
@@ -8,16 +8,72 @@ import {
   Image,
   Stack,
   Text,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { RiAliensFill } from "react-icons/ri";
 import { FaHeart, FaSkull } from "react-icons/fa";
 import { BiX } from "react-icons/bi";
-
-// left: calc(50% - 50px);
-// bottom: -30px;
+import { useAppSelector } from "../app/hooks";
+import { useEffect, useState } from "react";
+import {
+  fetchCharacters,
+  getMatches,
+  setMatches,
+} from "../app/features/user/charactersSlice";
+import { useAppDispatch } from "../app/store";
+import { CharacterInfo } from "../models";
+import { NoImage } from "../assets/images";
+import { randomNum } from "../utilities";
 
 const Card: React.FC<any> = () => {
+  const [randomNumber, setRandomNumber] = useState(0);
+  const [character, setCharacter] = useState<CharacterInfo>();
+  const [isNextMatch, setIsNextMatch] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const currentCharacter = useAppSelector(
+    (state) => state.characters.currentCharacter
+  );
+
+  useEffect(() => {
+    dispatch(fetchCharacters(randomNumber));
+  }, [randomNumber]);
+
+  useEffect(() => {
+    if (currentCharacter) {
+      setCharacter(currentCharacter);
+    }
+  }, [currentCharacter, character]);
+
+  const createRandomPage = () => {
+    const pagesTotal = 42;
+
+    setRandomNumber(randomNum(pagesTotal));
+  };
+
+  const handleMatches = async () => {
+    try {
+      const matched = randomNum(character ? character?.id : 10) % 2 === 0;
+
+      const characterMatches = { ...character, isMatch: matched };
+
+      dispatch(setMatches(characterMatches));
+      setIsNextMatch(true);
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          createRandomPage();
+
+          resolve(setIsNextMatch(false));
+        }, 2000);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const noMatches = async () => {
+    createRandomPage();
+  };
+
   return (
     <Box
       bg={"white"}
@@ -42,7 +98,9 @@ const Card: React.FC<any> = () => {
         <Image
           borderRadius="full"
           boxSize="200px"
-          src="https://rickandmortyapi.com/api/character/avatar/1.jpeg"
+          // src="https://rickandmortyapi.com/api/character/avatar/1.jpeg"
+          src={character?.image ? character.image : NoImage}
+          alt={character?.name ? character.name : "No image"}
         />
         <Box
           position={"absolute"}
@@ -68,20 +126,20 @@ const Card: React.FC<any> = () => {
         borderBottomLeftRadius={{ xs: 15, sm: 15, md: 0 }}
       >
         <Heading as={"h2"} color={"brand.primary"} mb={10} fontWeight={"bold"}>
-          Rick Sanchez
+          {character?.name ? character.name : ""}
         </Heading>
 
         <Stack>
           <HStack>
             <Icon as={RiAliensFill} w={7} h={7} color={"brand.primary"} />
             <Text as={"span"} color={"brand.secondary"} fontWeight={"bold"}>
-              Human
+              {character?.species ? character.species : ""}
             </Text>
           </HStack>
           <HStack>
             <Icon as={FaSkull} w={5} h={5} color={"brand.primary"} ml={1} />
             <Text as={"span"} color={"brand.secondary"} fontWeight={"bold"}>
-              Alive
+              {character?.status ? character.status : ""}
             </Text>
           </HStack>
         </Stack>
@@ -108,10 +166,11 @@ const Card: React.FC<any> = () => {
           justifyContent={"center"}
           alignItems={"center"}
           cursor={"pointer"}
+          onClick={noMatches}
         >
           <Icon as={BiX} w={7} h={7} color={"brand.primary"} />
         </Box>
-        <Box
+        <Button
           borderRadius="full"
           borderWidth={5}
           borderColor={"brand.secondary"}
@@ -122,10 +181,18 @@ const Card: React.FC<any> = () => {
           display={"flex"}
           justifyContent={"center"}
           alignItems={"center"}
-          cursor={"pointer"}
+          variant={"ghost"}
+          onClick={handleMatches}
+          isDisabled={isNextMatch}
+          _hover={{
+            bg: "white",
+          }}
+          _active={{
+            bg: "white",
+          }}
         >
           <Icon as={FaHeart} w={8} h={8} color={"brand.secondary"} />
-        </Box>
+        </Button>
       </Flex>
     </Box>
   );

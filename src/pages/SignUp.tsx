@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
   Box,
   Button,
@@ -14,35 +15,33 @@ import { AiOutlineGoogle } from "react-icons/ai";
 import { Logo, HeartLogo } from "../assets/images";
 import Footer from "../components/Footer";
 import { supabase } from "../supabase";
-import { Link, useNavigate } from "react-router-dom";
-const Login = (): JSX.Element => {
-  const emailRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
+import { useNavigate } from "react-router-dom";
 
-  const signin = async (e: React.SyntheticEvent) => {
+const SignUp = (): JSX.Element => {
+  const emailRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+
+  const signup = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
-    try {
-      const email = emailRef.current?.value;
+    const email = emailRef.current?.value;
 
-      const { user, session, error } = await supabase.auth.signIn(
+    try {
+      await supabase.auth.signUp(
         {
           email,
+          password: uuidv4(),
         },
-        { shouldCreateUser: false }
+        {
+          data: {
+            name: nameRef.current?.value,
+          },
+        }
       );
-
-      // navigate("/");
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
-
-  useEffect(() => {
-    if (supabase.auth.user()) {
-      navigate("/");
-    }
-  }, [navigate]);
 
   return (
     <Flex
@@ -70,19 +69,28 @@ const Login = (): JSX.Element => {
           my={5}
           width={"50"}
         />
-        <Box as={"form"} onSubmit={signin}>
+        <Box as={"form"} onSubmit={signup}>
           <Input
             variant={"outline"}
             type={"email"}
             placeholder={"Email"}
             ref={emailRef}
+            my={3}
             isRequired
           />
+
+          <Input
+            variant={"outline"}
+            type={"text"}
+            placeholder={"Name"}
+            ref={nameRef}
+            isRequired
+          />
+
           <Button type="submit" variant={"outline"} width={"100%"} my={5}>
-            Login
+            Sign Up
           </Button>
         </Box>
-        {/* <Input variant={"outline"} type={"text"} placeholder={"Name"} /> */}
       </VStack>
 
       <Text
@@ -120,16 +128,10 @@ const Login = (): JSX.Element => {
           Sing in
         </Button>
       </VStack> */}
-      <Text color={"brand.secondary"}>
-        Don't have account? Please{" "}
-        <Link to={"/signup"} style={{ fontWeight: "bold" }}>
-          signup{" "}
-        </Link>
-      </Text>
 
       <Footer />
     </Flex>
   );
 };
 
-export default Login;
+export default SignUp;

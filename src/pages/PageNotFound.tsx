@@ -1,3 +1,4 @@
+import { Link, useNavigate } from "react-router-dom";
 import {
   Button,
   Flex,
@@ -12,6 +13,15 @@ import { Logo } from "../assets/images";
 import Footer from "../components/Footer";
 
 const PageNotFound = () => {
+  let navigate = useNavigate();
+
+  const logOut = () => {
+    navigate("/login", { replace: true });
+  };
+  const signUp = () => {
+    navigate("/signup", { replace: true });
+  };
+
   return (
     <Flex
       direction={"column"}
@@ -38,16 +48,21 @@ const PageNotFound = () => {
 
       <HStack mt={10} alignSelf="flex-end">
         <Icon as={BsArrowLeft} w={6} h={6} color={"brand.secondary"} />
-        <Text as={"p"} color={"brand.secondary"}>
+        <Link style={{ color: "orange" }} to={"/"}>
           Back to main
-        </Text>
+        </Link>
+        {/* <Text as={"p"} color={"brand.secondary"}>
+        </Text> */}
       </HStack>
 
-      <Button variant={"outline"} width={"100%"} my={5}>
-        Sign in
+      <Button variant={"outline"} width={"100%"} my={5} onClick={signUp}>
+        Sign up
       </Button>
-      <Button variant={"outline"} width={"100%"}>
+      {/* <Button variant={"outline"} width={"100%"}>
         Sign Up
+      </Button> */}
+      <Button variant={"outline"} width={"100%"} onClick={logOut}>
+        Login
       </Button>
 
       <Footer />
