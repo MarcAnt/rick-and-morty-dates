@@ -1,13 +1,20 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, Link, HStack } from "@chakra-ui/react";
+import { Link as ReactLink } from "react-router-dom";
 
-const Footer = () => {
+export const Footer = () => {
   return (
-    <Box as="footer" my={5}>
-      <Text color={"white"} fontWeight={"bold"}>
-        develope by @bymarcant
+    <HStack as="footer" my={5}>
+      <Text as={"i"} color={"white"} fontWeight={"bold"}>
+        develope
       </Text>
-    </Box>
+
+      <a
+        target="_blank"
+        href={"https://www.linkedin.com/in/marcos-esqueda/"}
+        style={{ fontWeight: "bold", color: "white" }}
+      >
+        @bymarcant
+      </a>
+    </HStack>
   );
 };
-
-export default Footer;

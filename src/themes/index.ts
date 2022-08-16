@@ -9,7 +9,8 @@ const fonts = {
 const styles = {
   global: {
     "html, body": {
-      color: "#392453",
+      // color: "#392453",
+      color: "#217F31",
       bg: "brand.primary",
     },
   },
@@ -17,9 +18,15 @@ const styles = {
 
 const colors = {
   brand: {
-    primary: "#202F45",
-    secondary: "#EA580C",
-    secondaryLight: "rgba(234, 88, 12, 0.2)",
+    // primary: "#202F45",
+
+    primary: "#26354B",
+    // secondary: "#EA580C",
+
+    secondary: "#E7D6C3",
+    greenCard: "#4cae4f",
+    // secondaryLight: "rgba(234, 88, 12, 0.2)",
+    secondaryLight: "#E7D6C350",
   },
   bgBody: {
     primary: "brand.primary",
@@ -44,7 +51,7 @@ const Switch: ComponentStyleConfig = {
       track: {
         bg: "#87878B",
         _checked: {
-          bg: "brand.secondary",
+          bg: "brand.primary",
         },
       },
     },
@@ -59,18 +66,18 @@ const Input: ComponentStyleConfig = {
   variants: {
     outline: {
       field: {
-        background: "inherit",
+        background: "white",
         border: "1px solid",
-        borderColor: "#EA580C",
-        color: "white",
+        borderColor: "brand.secondary",
+        color: "brand.primary",
         _focus: {
-          borderColor: "#EA580C",
-          boxShadow: "0 0 0 1px #EA580C",
+          borderColor: "transparent",
+          boxShadow: "0 0 0 1px transparent",
         },
         _hover: {
-          borderColor: "#EA580C",
+          borderColor: "transparent",
           borderWidth: "1",
-          boxShadow: "0 0 0 1px #EA580C",
+          boxShadow: "0 0 0 1px transparent",
         },
       },
     },
@@ -109,11 +116,12 @@ const Button: ComponentStyleConfig = {
       borderColor: "brand.secondary",
       _hover: {
         bg: "brand.secondary",
+        color: "brand.primary",
       },
       _active: {
         borderSize: "1px",
         bg: "brand.secondary",
-        color: "white",
+        color: "brand.primary",
       },
     },
 

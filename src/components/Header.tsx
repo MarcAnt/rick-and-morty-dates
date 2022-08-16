@@ -1,41 +1,67 @@
-import { Box, Button } from "@chakra-ui/react";
 import { useEffect } from "react";
 
+import { Avatar, AvatarBadge, Box, Button, HStack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { fetchCharacters } from "../app/features/user/charactersSlice";
-import { useAppSelector } from "../app/hooks";
-import { useAppDispatch } from "../app/store";
-import { supabase } from "../supabase";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { getUserDetails } from "../app/features/user/userActionsSlice";
+import { logout } from "../app/features/user/userSlice";
+import { clearAllMatches } from "../app/features/characters/charactersSlice";
 
-const Header = () => {
+export const Header = () => {
   const navigate = useNavigate();
 
-  // console.log(characters);
+  const { userInfo, token } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) {
-        navigate("/login");
-      } else {
-        navigate("/");
-      }
-    });
-  }, []);
+    if (!token) {
+      navigate("/login");
+    } else {
+      dispatch(getUserDetails(token));
+    }
+  }, [token, dispatch]);
 
   const logOut = () => {
-    supabase.auth.signOut();
+    //Logout
+    dispatch(logout());
+    //Clear all matches
+    dispatch(clearAllMatches());
   };
 
   return (
-    <Box as={"header"} display={"flex"} justifyContent={"flex-end"} my={5}>
-      <Button variant={"outline"} color={"white"} onClick={logOut}>
+    <Box
+      as={"header"}
+      display={"flex"}
+      justifyContent={"flex-end"}
+      alignItems={"center"}
+      my={5}
+      mr={5}
+    >
+      <HStack mr={5}>
+        <Avatar
+          size="md"
+          name={`${userInfo.name ? userInfo.name : ""}`}
+          title={`${userInfo.name ? userInfo.name : ""}`}
+        >
+          <AvatarBadge
+            borderColor="brand.primary"
+            boxSize="1em"
+            bg="green.500"
+          />
+        </Avatar>
+      </HStack>
+
+      <Button
+        variant={"outline"}
+        color={"white"}
+        fontWeight={"normal"}
+        onClick={logOut}
+      >
         Logout
       </Button>
-      <Button variant={"ghost"} color={"white"} paddingRight={10}>
+      {/* <Button variant={"ghost"} color={"white"} paddingRight={10}>
         ES | EN
-      </Button>
+      </Button> */}
     </Box>
   );
 };
-
-export default Header;

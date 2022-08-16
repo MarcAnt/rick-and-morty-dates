@@ -1,11 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 
-import charactersReducer from "./features/user/charactersSlice";
+import charactersReducer from "./features/characters/charactersSlice";
+import userReducer from "./features/user/userSlice";
+
 export const store = configureStore({
   reducer: {
-    // counter: counterReducer,
-    // posts: postsReducer,
+    user: userReducer,
     characters: charactersReducer,
   },
 });

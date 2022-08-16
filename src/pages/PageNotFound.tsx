@@ -1,4 +1,3 @@
-import { Link, useNavigate } from "react-router-dom";
 import {
   Button,
   Flex,
@@ -6,11 +5,12 @@ import {
   HStack,
   Icon,
   Image,
-  Text,
+  Link,
 } from "@chakra-ui/react";
 import { BsArrowLeft } from "react-icons/bs";
 import { Logo } from "../assets/images";
-import Footer from "../components/Footer";
+import { useNavigate, Link as ReactLink } from "react-router-dom";
+import { Footer } from "../components";
 
 const PageNotFound = () => {
   let navigate = useNavigate();
@@ -48,7 +48,7 @@ const PageNotFound = () => {
 
       <HStack mt={10} alignSelf="flex-end">
         <Icon as={BsArrowLeft} w={6} h={6} color={"brand.secondary"} />
-        <Link style={{ color: "orange" }} to={"/"}>
+        <Link as={ReactLink} color={"brand.secondary"} to={"/"}>
           Back to main
         </Link>
         {/* <Text as={"p"} color={"brand.secondary"}>

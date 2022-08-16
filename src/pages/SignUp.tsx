@@ -1,46 +1,76 @@
-import React, { useEffect, useRef } from "react";
-import { v4 as uuidv4 } from "uuid";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
   Box,
   Button,
   Flex,
-  FormControl,
-  Icon,
+  HStack,
   Image,
   Input,
+  Link,
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { AiOutlineGoogle } from "react-icons/ai";
+
+import { useNavigate, Link as ReactLink } from "react-router-dom";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
 import { Logo, HeartLogo } from "../assets/images";
-import Footer from "../components/Footer";
-import { supabase } from "../supabase";
-import { useNavigate } from "react-router-dom";
+import { registerUser } from "../app/features/user/userActionsSlice";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { UserInfo } from "../models";
 
-const SignUp = (): JSX.Element => {
-  const emailRef = useRef<HTMLInputElement>(null);
-  const nameRef = useRef<HTMLInputElement>(null);
+import { Footer } from "../components";
 
-  const signup = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
+const UserScheme = z.object({
+  name: z
+    .string()
+    .max(50, { message: "Must be 5 or fewer characters long" })
+    .min(5, { message: "Must be 5 or more characters long" }),
+  email: z.string().email({ message: "Invalid email address" }),
+});
 
-    const email = emailRef.current?.value;
+const SignUp: React.FC = (): JSX.Element => {
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Omit<UserInfo, "token">>({
+    resolver: zodResolver(UserScheme),
+  });
 
-    try {
-      await supabase.auth.signUp(
-        {
-          email,
-          password: uuidv4(),
-        },
-        {
-          data: {
-            name: nameRef.current?.value,
-          },
-        }
-      );
-    } catch (error) {
-      console.log(error);
-    }
+  const dispatch = useAppDispatch();
+  const { loading, userInfo, error, success } = useAppSelector(
+    (state) => state.user
+  );
+
+  const handleNavigate = (name: UserInfo["name"], email: UserInfo["email"]) => {
+    navigate("/login", {
+      state: {
+        name,
+        email,
+      },
+    });
+  };
+
+  useEffect(() => {
+    // redirect user to login page if registration was successful
+    if (success) handleNavigate(userInfo.name, userInfo.email);
+
+    // redirect authenticated user to profile screen
+    if (userInfo.name) navigate("/");
+  }, [navigate, userInfo, success]);
+
+  const signup: SubmitHandler<Omit<UserInfo, "token">> = async (data) => {
+    dispatch(registerUser({ ...data }));
+
+    handleNavigate(data.name, data.email);
   };
 
   return (
@@ -60,7 +90,7 @@ const SignUp = (): JSX.Element => {
         />
 
         <Text color={"white"} textAlign={"center"} my={10}>
-          Select your favorites characters to date and match
+          Select your favorites characters to match
         </Text>
 
         <Image
@@ -69,26 +99,68 @@ const SignUp = (): JSX.Element => {
           my={5}
           width={"50"}
         />
-        <Box as={"form"} onSubmit={signup}>
+        <Box as={"form"} onSubmit={handleSubmit(signup)}>
           <Input
             variant={"outline"}
             type={"email"}
             placeholder={"Email"}
-            ref={emailRef}
+            {...register("email")}
+            name={"email"}
             my={3}
+            autoComplete={"off"}
+            isInvalid={errors?.email?.message ? true : false}
             isRequired
           />
+          {errors.email && (
+            <Text
+              mt={2}
+              color={"brand.primary"}
+              bg={"brand.secondary"}
+              p={1}
+              borderRadius={5}
+            >
+              {errors.email.message}
+            </Text>
+          )}
 
           <Input
             variant={"outline"}
             type={"text"}
             placeholder={"Name"}
-            ref={nameRef}
+            {...register("name")}
+            autoComplete={"off"}
+            isInvalid={errors?.name?.message ? true : false}
             isRequired
           />
+          {errors.name && (
+            <Text
+              mt={2}
+              color={"red.800"}
+              bg={"brand.secondary"}
+              p={1}
+              borderRadius={5}
+              textAlign={"center"}
+              fontWeight={"bold"}
+            >
+              {errors.name.message}
+            </Text>
+          )}
 
-          <Button type="submit" variant={"outline"} width={"100%"} my={5}>
-            Sign Up
+          {error ? (
+            <Alert status="error" mt={2} rounded={"lg"}>
+              <AlertIcon />
+              <AlertTitle color={"red.800"}>{error.toString()}</AlertTitle>
+            </Alert>
+          ) : null}
+
+          <Button
+            type="submit"
+            variant={"outline"}
+            width={"100%"}
+            my={5}
+            disabled={loading}
+          >
+            Register
           </Button>
         </Box>
       </VStack>
@@ -104,30 +176,21 @@ const SignUp = (): JSX.Element => {
         Your data will be safe in another dimension.
       </Text>
 
-      {/* <VStack w={"100%"}>
-        <Button
-          backgroundColor={"white"}
-          width={"100%"}
-          boxShadow={
-            "inset 5px 0px 0px #FBBC05, inset 0px -5px 0px #34A853, inset 0px 5px 0px #EA4335, inset -5px 0px 0px #4285F4;"
-          }
-          _hover={{ bgColor: "white" }}
-          _active={{ bgColor: "white" }}
+      <HStack>
+        <Text color={"brand.secondary"}>Already have an account? Please</Text>
+
+        <Link
+          as={ReactLink}
+          to={"/login"}
+          color={"brand.primary"}
+          bg={"brand.secondary"}
+          p={1}
+          borderRadius={5}
+          style={{ fontWeight: "bold" }}
         >
-          <Icon as={AiOutlineGoogle} color={"brand.secondary"} w={6} h={6} />
-        </Button>
-        <Button
-          variant={"outline"}
-          backgroundColor={"white"}
-          width={"100%"}
-          borderWidth={"5"}
-          color={"brand.secondary"}
-          borderColor={"brand.secondary"}
-          _hover={{ bgColor: "white" }}
-        >
-          Sing in
-        </Button>
-      </VStack> */}
+          login
+        </Link>
+      </HStack>
 
       <Footer />
     </Flex>

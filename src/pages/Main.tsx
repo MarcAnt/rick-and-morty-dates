@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {
-  Avatar,
   Box,
   Button,
-  CloseButton,
-  Collapse,
   filter,
   Flex,
   HStack,
   Icon,
-  Image,
   Popover,
   PopoverBody,
   PopoverCloseButton,
@@ -18,92 +14,88 @@ import {
   Stack,
   Switch,
   Text,
-  useBreakpointValue,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
-import { Logo } from "../assets/images";
-import Header from "../components/Header";
+
+import { SideBar, Header, Card } from "../components";
+
 import { AiFillControl, AiOutlineMenuUnfold } from "react-icons/ai";
-import Card from "../components/Card";
-import { FaGenderless, FaHeart, FaHeartBroken } from "react-icons/fa";
-import { BiX } from "react-icons/bi";
-import Footer from "../components/Footer";
+
 import { FiltersBoolean, Gender, Species } from "../models";
-import {
-  clearAllMatches,
-  filterCharacter,
-  getMatches,
-  removeMatch,
-} from "../app/features/user/charactersSlice";
+import { filterCharacter } from "../app/features/characters/charactersSlice";
 import { useAppDispatch } from "../app/store";
-import { useAppSelector } from "../app/hooks";
-import { AnimatePresence, motion } from "framer-motion";
+import { useCycle } from "framer-motion";
 
 const Main = (): JSX.Element => {
-  const { onOpen, onClose, isOpen } = useDisclosure();
-  const {
-    onClose: onCloseMenu,
-    isOpen: isOpenMenu,
-    onOpen: onOpenMenu,
-    onToggle,
-  } = useDisclosure();
-
-  const collapse = useBreakpointValue({
-    base: isOpenMenu,
-    md: !isOpenMenu,
-  });
-
   const [filters, setFilters] = useState<FiltersBoolean>({
-    species: { human: true, alien: true },
+    species: {
+      human: true,
+      alien: true,
+      mythological: true,
+      humanoid: true,
+      other: true,
+    },
     gender: { female: true, male: true, genderless: false, unknown: false },
   });
 
+  const {
+    onOpen: onOpenFilter,
+    onClose: onCloseFilter,
+    isOpen: isOpenFilter,
+  } = useDisclosure();
+
+  const [open, cycleOpen] = useCycle(false, true);
+
   const firstFieldRef = React.useRef(null);
   const dispatch = useAppDispatch();
-  const matches = useAppSelector(getMatches);
 
   const createFilters = () => {
-    // let f: string[] = [];
-
     let f: { genders: Gender[]; species: Species[] } = {
       genders: [],
       species: [],
     };
 
+    //Genders
+
     if (filters.gender.female) {
       f = { species: [...f.species], genders: [...f.genders, "Female"] };
-      // f = [...f, "female"];
     }
 
     if (filters.gender.male) {
       f = { species: [...f.species], genders: [...f.genders, "Male"] };
-      // f = { ...f, male: "male" };
-      // f = [...f, "male"];
     }
 
     if (filters.gender.genderless) {
       f = { species: [...f.species], genders: [...f.genders, "Genderless"] };
-      // f = { ...f, genderless: "genderless" };
-      // f = [...f, "genderless"];
     }
 
     if (filters.gender.unknown) {
       f = { species: [...f.species], genders: [...f.genders, "Unknown"] };
-      // f = { ...f, unknown: "unknown" };
-      // f = [...f, "unknown"];
     }
+
+    //Espcies
 
     if (filters.species.alien) {
       f = { genders: [...f.genders], species: [...f.species, "Alien"] };
-      // f = { ...f, alien: "alien" };
-      // f = [...f, "alien"];
     }
     if (filters.species.human) {
       f = { genders: [...f.genders], species: [...f.species, "Human"] };
+    }
 
-      // f = { ...f, human: "human" };
-      // f = [...f, "human"];
+    if (filters.species.humanoid) {
+      f = { genders: [...f.genders], species: [...f.species, "Humanoid"] };
+    }
+
+    if (filters.species.mythological) {
+      f = {
+        genders: [...f.genders],
+        species: [...f.species, "Mythological Creature"],
+      };
+    }
+
+    if (filters.species.other) {
+      f = { genders: [...f.genders], species: [...f.species, "Others"] };
     }
 
     dispatch(filterCharacter(f));
@@ -117,211 +109,76 @@ const Main = (): JSX.Element => {
     createFilters();
   }, [filter]);
 
-  const MotionStack = motion(HStack);
-
-  //Control filters in modal. Almost one would be checked to Apply filter
-  const isValidFilers =
+  //Control filters in popover. Almost one would be checked to Apply filters
+  const isValidFilters =
     !filters.gender.female &&
     !filters.gender.male &&
     !filters.gender.genderless &&
     !filters.gender.unknown &&
     !filters.species.alien &&
+    !filters.species.humanoid &&
+    !filters.species.mythological &&
+    !filters.species.other &&
     !filters.species.human;
 
   return (
     <Flex w="100%">
-      <Collapse in={collapse} style={{ flex: 2, zIndex: 10 }}>
-        <Box
-          as={"aside"}
-          h={"100vh"}
-          paddingX={10}
-          borderRight={"1px solid #EA580C"}
-          // display={"flex"}
-          position={{ xs: "absolute", sm: "absolute", md: "static" }}
-          flexDirection={"column"}
-          justifyContent={"flex-start"}
-          alignItems={"stretch"}
-          bg={"brand.primary"}
-          zIndex={{ xs: 1, sm: 1, md: 0 }}
-          w={{ xs: "100%", sm: "100%", md: "auto" }}
-        >
-          <HStack
-            display={{ xs: "flex", sm: "flex", md: "none" }}
-            justifyContent={"flex-end"}
-            mt={2}
-          >
-            <CloseButton color={"white"} onClick={onToggle} />
-          </HStack>
-
-          <Stack
-            direction="column"
-            borderBottom={"0.5px solid #EA580C"}
-            w={"100%"}
-          >
-            <Image
-              src={Logo}
-              alt="Rick & Morty Logo green portal"
-              my={5}
-              width={"200px"}
-              alignSelf={"center"}
-            />
-
-            <HStack pb={4}>
-              <Avatar
-                size="lg"
-                name="Marcos Esqueda"
-                src="https://bit.ly/broken-link"
-              />
-              <Text as={"span"} color={"white"}>
-                {/* {name} */}
-              </Text>
-            </HStack>
-          </Stack>
-
-          <Text
-            fontSize={"lg"}
-            fontWeight={"bold"}
-            color={"brand.secondary"}
-            my={2}
-          >
-            Matches
-          </Text>
-          <Stack spacing={5} w={"100%"} my={4}>
-            <AnimatePresence>
-              {matches.length ? (
-                matches.map((match) => (
-                  <MotionStack
-                    key={match.name}
-                    as={motion.div}
-                    transition="0.5s linear"
-                    bg="brand.secondaryLight"
-                    borderRadius={10}
-                    padding={1.5}
-                    position={"relative"}
-                    sx={{
-                      ".my-matches-close": {
-                        opacity: "0",
-                      },
-                      "&:hover .my-matches-close": {
-                        opacity: "1",
-                      },
-                    }}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    title={match.name}
-                  >
-                    <Box position={"relative"}>
-                      <Avatar size="md" name={match.name} src={match.image} />
-                      <Icon
-                        as={match.isMatch ? FaHeart : FaHeartBroken}
-                        w={5}
-                        h={5}
-                        color={"brand.secondary"}
-                        position={"absolute"}
-                        right={"-8px"}
-                        bottom={0}
-                      />
-                    </Box>
-                    <Text
-                      as={"span"}
-                      color={"white"}
-                      textOverflow={"ellipsis"}
-                      pl={2}
-                    >
-                      {match.name}
-                    </Text>
-                    <Button
-                      variant={"ghost"}
-                      position={"absolute"}
-                      right={0}
-                      bottom={2.5}
-                      className={"my-matches-close"}
-                      onClick={() => {
-                        dispatch(removeMatch(match.id));
-                      }}
-                    >
-                      <Icon as={BiX} w={7} h={7} color={"white"} />
-                    </Button>
-                  </MotionStack>
-                ))
-              ) : (
-                <Text
-                  as={"span"}
-                  fontSize={"md"}
-                  fontWeight={"bold"}
-                  color={"white"}
-                  my={4}
-                >
-                  No matches yet. Prove your luck to macth.
-                </Text>
-              )}
-            </AnimatePresence>
-          </Stack>
-
-          {matches.length && (
-            <Button
-              width={"100%"}
-              alignSelf={"center"}
-              my={5}
-              onClick={() => {
-                dispatch(clearAllMatches());
-              }}
-            >
-              Clear all matches
-            </Button>
-          )}
-          <Footer />
-        </Box>
-      </Collapse>
+      <SideBar onToggleMenu={cycleOpen} isOpenMenu={open} />
 
       <Box as={"main"} flex={6}>
         {/* Header */}
         <Flex alignItems={"center"} justifyContent={"space-between"}>
-          <Box>
-            <Button variant={"ghost"} ml={5} onClick={onToggle}>
+          <Flex>
+            <Button variant={"ghost"} ml={5} onClick={() => cycleOpen()}>
               <Icon
                 as={AiOutlineMenuUnfold}
                 w={7}
                 h={7}
                 color={"brand.secondary"}
+                title={"Matches panel"}
               />
             </Button>
 
             <Popover
-              isOpen={isOpen}
+              isOpen={isOpenFilter}
               initialFocusRef={firstFieldRef}
-              onOpen={onOpen}
-              onClose={onClose}
+              onOpen={onOpenFilter}
+              onClose={onCloseFilter}
               closeOnBlur={false}
               placement="bottom-start"
             >
               <PopoverTrigger>
-                <Button variant={"ghost"} ml={5}>
-                  <Icon as={AiFillControl} w={7} h={7} color={"white"} />
+                <Button variant={"ghost"}>
+                  <Icon
+                    as={AiFillControl}
+                    w={7}
+                    h={7}
+                    color={"white"}
+                    title={"Filters"}
+                  />
                 </Button>
               </PopoverTrigger>
               <PopoverContent
-                bg="rgb(244 171 133)"
+                bg="white"
                 color="white"
-                borderColor={"brand.secondary"}
+                borderColor={"brand.primary"}
+                borderWidth={2}
               >
-                {/* <PopoverArrow /> */}
-                <PopoverCloseButton color={"white"} />
-                <PopoverBody my={3}>
+                <PopoverCloseButton color={"brand.primary"} />
+                <PopoverBody>
                   <Text
-                    color={"white"}
-                    fontWeight={"bold"}
+                    color={"brand.primary"}
+                    fontWeight={"extrabold"}
                     fontSize="xl"
                     mb={3}
                   >
                     Species
                   </Text>
-                  <Stack direction={"row"}>
+                  <Stack direction={"row"} wrap={"wrap"}>
                     <VStack>
                       <Box
                         as={"label"}
-                        fontWeight={"bold"}
-                        color={"brand.secondary"}
+                        color={"brand.primary"}
                         htmlFor={"human"}
                       >
                         Human
@@ -347,8 +204,7 @@ const Main = (): JSX.Element => {
                     <VStack>
                       <Box
                         as={"label"}
-                        fontWeight={"bold"}
-                        color={"brand.secondary"}
+                        color={"brand.primary"}
                         htmlFor={"alien"}
                       >
                         Alien
@@ -371,22 +227,101 @@ const Main = (): JSX.Element => {
                         }}
                       />
                     </VStack>
+
+                    <VStack>
+                      <Box
+                        as={"label"}
+                        color={"brand.primary"}
+                        htmlFor={"humanoid"}
+                      >
+                        Humanoid
+                      </Box>
+                      <Switch
+                        size="md"
+                        alignSelf={"flex-start"}
+                        id={"humanoid"}
+                        colorScheme="secondary"
+                        isChecked={filters.species.humanoid}
+                        onChange={(e) => {
+                          setFilters(
+                            Object.assign({}, filters, {
+                              species: {
+                                ...filters.species,
+                                humanoid: e.target.checked,
+                              },
+                            })
+                          );
+                        }}
+                      />
+                    </VStack>
+
+                    <VStack>
+                      <Box
+                        as={"label"}
+                        color={"brand.primary"}
+                        htmlFor={"myth"}
+                      >
+                        Mythological
+                      </Box>
+                      <Switch
+                        size="md"
+                        alignSelf={"flex-start"}
+                        id={"myth"}
+                        colorScheme="secondary"
+                        isChecked={filters.species.mythological}
+                        onChange={(e) => {
+                          setFilters(
+                            Object.assign({}, filters, {
+                              species: {
+                                ...filters.species,
+                                mythological: e.target.checked,
+                              },
+                            })
+                          );
+                        }}
+                      />
+                    </VStack>
+                    <VStack style={{ margin: 0 }}>
+                      <Box
+                        as={"label"}
+                        color={"brand.primary"}
+                        htmlFor={"others"}
+                      >
+                        Others
+                      </Box>
+                      <Switch
+                        size="md"
+                        alignSelf={"flex-start"}
+                        id={"others"}
+                        colorScheme="secondary"
+                        isChecked={filters.species.other}
+                        onChange={(e) => {
+                          setFilters(
+                            Object.assign({}, filters, {
+                              species: {
+                                ...filters.species,
+                                other: e.target.checked,
+                              },
+                            })
+                          );
+                        }}
+                      />
+                    </VStack>
                   </Stack>
 
                   <Text
-                    color={"white"}
-                    fontWeight={"bold"}
+                    color={"brand.primary"}
+                    fontWeight={"extrabold"}
                     fontSize="xl"
                     my={3}
                   >
                     Gender
                   </Text>
-                  <Stack direction={"row"}>
+                  <Stack direction={"row"} wrap={"wrap"}>
                     <VStack>
                       <Box
                         as={"label"}
-                        fontWeight={"bold"}
-                        color={"brand.secondary"}
+                        color={"brand.primary"}
                         htmlFor={"female"}
                       >
                         Female
@@ -412,8 +347,7 @@ const Main = (): JSX.Element => {
                     <VStack>
                       <Box
                         as={"label"}
-                        fontWeight={"bold"}
-                        color={"brand.secondary"}
+                        color={"brand.primary"}
                         htmlFor={"male"}
                       >
                         Male
@@ -439,8 +373,7 @@ const Main = (): JSX.Element => {
                     <VStack>
                       <Box
                         as={"label"}
-                        fontWeight={"bold"}
-                        color={"brand.secondary"}
+                        color={"brand.primary"}
                         htmlFor={"genderless"}
                       >
                         Genderless
@@ -466,8 +399,7 @@ const Main = (): JSX.Element => {
                     <VStack>
                       <Box
                         as={"label"}
-                        fontWeight={"bold"}
-                        color={"brand.secondary"}
+                        color={"brand.primary"}
                         htmlFor={"unknown"}
                       >
                         Unknown
@@ -494,24 +426,28 @@ const Main = (): JSX.Element => {
 
                   <HStack justifyContent={"flex-end"} mt={3}>
                     <Button
-                      bg={"transparent"}
-                      borderWidth={"0.5px"}
-                      borderColor={"white"}
-                      onClick={onClose}
+                      color={"brand.primary"}
+                      onClick={onCloseFilter}
+                      variant={"outline"}
                     >
                       Cancel
                     </Button>
                     <Button
-                      bg={"white"}
-                      color={"brand.secondary"}
+                      variant={"solid"}
+                      bg={"brand.primary"}
                       _hover={{
-                        color: "white",
-                        bg: "brand.secondary",
+                        bg: "brand.primary",
+                        color: "brand.secondary",
                       }}
-                      disabled={isValidFilers}
+                      _active={{
+                        bg: "brand.primary",
+                        color: "brand.secondary",
+                      }}
+                      color={"brand.secondary"}
+                      disabled={isValidFilters}
                       onClick={() => {
                         handleFilters();
-                        onClose();
+                        onCloseFilter();
                       }}
                     >
                       Apply
@@ -520,7 +456,7 @@ const Main = (): JSX.Element => {
                 </PopoverBody>
               </PopoverContent>
             </Popover>
-          </Box>
+          </Flex>
 
           <Header />
         </Flex>

@@ -1,19 +1,24 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { Navigate, useLocation } from "react-router-dom";
-import { PropsChildren } from "../models";
-// import { AuthContext } from "../auth/AuthContext";
+import { Alert, AlertIcon, AlertTitle, Heading } from "@chakra-ui/react";
 
-const PrivateRoute = ({ children }: PropsChildren) => {
-  //   const { user } = useContext(AuthContext);
-  //   const { uid } = useSelector((state) => state.auth);
+import { Navigate, NavLink, Outlet, useLocation } from "react-router-dom";
+import { useAppSelector } from "../app/hooks";
 
-  const { pathname, search } = useLocation();
-  //Ayuda a recordar la ultima ruta con todo y busqueda realizada
-  //   localStorage.setItem("lastPath", pathname + search);
+const PrivateRoute = () => {
+  const { userInfo } = useAppSelector((state) => state.user);
 
-  return true ? <> {children} </> : <Navigate to="/login" />;
-  //   return user.logged ? children : <Navigate to="/login" />;
+  if (!userInfo) {
+    return (
+      <Alert status="error" mt={2} rounded={"lg"}>
+        <AlertIcon />
+        <AlertTitle color={"red.800"}>
+          <Heading as={"h1"}>Unauthorized :(</Heading>
+          <NavLink to="/login">Login</NavLink> to gain access
+        </AlertTitle>
+      </Alert>
+    );
+  }
+
+  return <Outlet />;
 };
 
 export default PrivateRoute;
