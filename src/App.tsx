@@ -1,45 +1,35 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import { Routes, Route } from "react-router-dom";
+import { Box } from "@chakra-ui/react";
+import Login from "./pages/Login";
+import Main from "./pages/Main";
+import PageNotFound from "./pages/PageNotFound";
 
-function App() {
-  const [count, setCount] = useState(0)
+// import PublicRoute from "./router/PublicRoute";
+// import PrivateRoute from "./router/PrivateRoute";
+import SignUp from "./pages/SignUp";
+import PrivateRoute from "./router/PrivateRoute";
 
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
-  )
-}
+    <Box maxW={"1440px"} margin={"0 auto"}>
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route element={<PrivateRoute />}>
+            {/* <Route path='/user-profile' element={<ProfileScreen />} /> */}
+            <Route path="/" element={<Main />} />
+          </Route>
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </Box>
+    </Box>
+  );
+};
 
-export default App
+export default App;
