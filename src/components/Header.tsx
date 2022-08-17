@@ -1,17 +1,41 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-import { Avatar, AvatarBadge, Box, Button, HStack } from "@chakra-ui/react";
+import {
+  Avatar,
+  AvatarBadge,
+  Box,
+  Button,
+  HStack,
+  Image,
+} from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { getUserDetails } from "../app/features/user/userActionsSlice";
 import { logout } from "../app/features/user/userSlice";
-import { clearAllMatches } from "../app/features/characters/charactersSlice";
+import {
+  clearAllMatches,
+  getMatches,
+} from "../app/features/characters/charactersSlice";
+import { RMToken } from "../assets/images";
 
 export const Header = () => {
   const navigate = useNavigate();
 
   const { userInfo, token } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
+  const matches = useAppSelector(getMatches);
+
+  const [showToken, setShowToken] = useState(false);
+
+  useEffect(() => {
+    const countMatch = matches.filter((match) => {
+      if (match.isMatch) {
+        return match;
+      }
+      return;
+    });
+    if (countMatch.length > 2) setShowToken(true);
+  }, [matches]);
 
   useEffect(() => {
     if (!token) {
@@ -38,6 +62,22 @@ export const Header = () => {
       mr={5}
     >
       <HStack mr={5}>
+        {showToken && (
+          <Box
+            bgColor={"brand.secondary"}
+            rounded={"md"}
+            p={1}
+            display={{ xs: "none", sm: "block" }}
+          >
+            <Image
+              borderRadius="full"
+              boxSize="2rem"
+              src={RMToken}
+              alt="Rick & Morty Token"
+            />
+          </Box>
+        )}
+
         <Avatar
           size="md"
           name={`${userInfo.name ? userInfo.name : ""}`}
@@ -59,9 +99,6 @@ export const Header = () => {
       >
         Logout
       </Button>
-      {/* <Button variant={"ghost"} color={"white"} paddingRight={10}>
-        ES | EN
-      </Button> */}
     </Box>
   );
 };

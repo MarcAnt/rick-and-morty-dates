@@ -136,10 +136,19 @@ const Button: ComponentStyleConfig = {
   },
 };
 
+const Modal = {
+  baseStyle: {
+    dialog: {
+      maxHeight: "calc(100vh - 50px)",
+      overflowY: "auto",
+    },
+  },
+};
+
 export const theme = extendTheme({
   styles,
   colors,
   fonts,
   breakpoints,
-  components: { Button, Switch, Input },
+  components: { Button, Switch, Input, Modal },
 });

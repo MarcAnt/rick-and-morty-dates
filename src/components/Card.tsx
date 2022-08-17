@@ -90,7 +90,7 @@ export const Card: React.FC = () => {
             <Text color="brand.primary" fontWeight={"bold"}>
               A New character to Match!
               <br />
-              Check the left panel see all.
+              Check the left panel to see all.
             </Text>
           </Flex>
         ),
@@ -108,8 +108,8 @@ export const Card: React.FC = () => {
 
   return (
     <Box
-      bg={"white"}
-      borderRadius={15}
+      // bg={"white"}
+      // borderRadius={15}
       display={"flex"}
       flexDirection={{ xs: "column", sm: "column", md: "row", lg: "row" }}
       justifyContent={"space-evenly"}
@@ -126,6 +126,10 @@ export const Card: React.FC = () => {
         justifyContent={"center"}
         alignItems={"center"}
         position={"relative"}
+        bgColor={"white"}
+        borderTopLeftRadius={15}
+        borderBottomLeftRadius={{ xs: 0, sm: 0, md: 15 }}
+        borderTopRightRadius={{ xs: 15, sm: 15, md: 0 }}
       >
         <SkeletonCircle
           boxSize="200px"

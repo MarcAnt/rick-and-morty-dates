@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   Box,
@@ -21,6 +21,7 @@ import {
   Tag,
   TagLabel,
   Text,
+  useBoolean,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
@@ -36,11 +37,13 @@ import {
   getMatches,
   removeMatch,
 } from "../app/features/characters/charactersSlice";
-import { Logo } from "../assets/images";
+import { Logo, RMToken } from "../assets/images";
 
 import { addEllipses, gendersIcons } from "../utilities";
 import { CharacterInfo } from "../models";
 import { Footer } from "./Footer";
+import ModalMatchInfo from "./modals/ModalMatchInfo";
+import ModalTokenInfo from "./modals/ModalTokenInfo";
 
 export const SideBar = ({
   onToggleMenu,
@@ -52,8 +55,14 @@ export const SideBar = ({
   const [selectedCharacter, setSelectedCharacter] = useState(
     {} as CharacterInfo
   );
-
+  const [coinCount, setCoinCount] = useState(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenModal,
+    onOpen: onOpenModal,
+    onClose: onCloseModal,
+  } = useDisclosure();
+
   const dispatch = useAppDispatch();
   const matches = useAppSelector(getMatches);
 
@@ -62,6 +71,20 @@ export const SideBar = ({
     const filteredCharacter = matches.find((match) => match.id === id);
     if (filteredCharacter) setSelectedCharacter(filteredCharacter);
   };
+
+  useEffect(() => {
+    const countMatch = matches.filter((match) => {
+      if (match.isMatch) {
+        return match;
+      }
+      return;
+    });
+
+    if (countMatch.length >= 3 && coinCount === 0) {
+      setCoinCount(1);
+      onOpenModal();
+    }
+  }, [matches]);
 
   return (
     <>
@@ -251,128 +274,15 @@ export const SideBar = ({
         </Box>
       )}
 
-      <Modal onClose={onClose} size={"lg"} isOpen={isOpen}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader color={"brand.primary"}>Match Info</ModalHeader>
-          <ModalCloseButton color={"brand.primary"} />
-          <ModalBody>
-            <Flex
-              position={"relative"}
-              py={2}
-              px={1}
-              justifyContent={"space-evenly"}
-            >
-              <HStack justifyContent={"center"} alignItems={"center"} flex={1}>
-                <Image
-                  borderRadius="full"
-                  boxSize="8rem"
-                  src={selectedCharacter?.image && selectedCharacter.image}
-                  alt={selectedCharacter?.name && selectedCharacter.name}
-                />
-              </HStack>
+      {/* Modals */}
 
-              <VStack flex={2}>
-                <Heading
-                  fontSize={"xl"}
-                  fontWeight={"bold"}
-                  color={"brand.primary"}
-                >
-                  {selectedCharacter.name}
-                </Heading>
-                <HStack
-                  spacing={3}
-                  wrap={"wrap"}
-                  rowGap={2}
-                  justifyContent={"center"}
-                >
-                  <Tag
-                    size={"lg"}
-                    borderRadius="full"
-                    variant="solid"
-                    bg="brand.primary"
-                  >
-                    <TagLabel mr={2}>{selectedCharacter.species}</TagLabel>
-                    <Icon as={RiAliensFill} />
-                  </Tag>
-                  <Tag
-                    size={"lg"}
-                    borderRadius="full"
-                    variant="solid"
-                    bg="brand.primary"
-                  >
-                    <TagLabel mr={2}>{selectedCharacter.gender}</TagLabel>
-                    <Icon as={gendersIcons[selectedCharacter.gender]} />
-                  </Tag>
-                  <Tag
-                    size={"lg"}
-                    borderRadius="full"
-                    variant="solid"
-                    bg="brand.primary"
-                  >
-                    <TagLabel mr={2}>
-                      {selectedCharacter?.location?.name}
-                    </TagLabel>
-                    <Icon as={MdOutlineMyLocation} />
-                  </Tag>
-                  <Tag
-                    size={"lg"}
-                    borderRadius="full"
-                    variant="solid"
-                    bg="brand.primary"
-                  >
-                    <TagLabel mr={2}>{selectedCharacter.status}</TagLabel>
-                    <Icon as={FaSkull} />
-                  </Tag>
-                </HStack>
-              </VStack>
-            </Flex>
+      <ModalTokenInfo onClose={onCloseModal} isOpen={isOpenModal} />
 
-            <Flex
-              justifyContent={"space-evenly"}
-              my={5}
-              p={2}
-              bg={"red.200"}
-              rounded={"md"}
-              borderColor={"red.900"}
-              borderWidth={2}
-            >
-              <Icon
-                as={selectedCharacter.isMatch ? FaHeart : FaHeartBroken}
-                w={10}
-                h={10}
-                color={"red.500"}
-              />
-              <Text color={"red.800"} fontSize={"2xl"}>
-                {selectedCharacter.isMatch ? "Match" : "No match"}
-              </Text>
-            </Flex>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant={"solid"}
-              bg={"brand.primary"}
-              _hover={{
-                bg: "brand.primary",
-                color: "brand.secondary",
-              }}
-              _active={{
-                bg: "brand.primary",
-                color: "brand.secondary",
-              }}
-              color={"brand.secondary"}
-              // disabled={isValidFilters}
-              onClick={() => {
-                // handleFilters();
-                // onCloseFilter();
-                onClose();
-              }}
-            >
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <ModalMatchInfo
+        characterInfo={selectedCharacter}
+        onClose={onClose}
+        isOpen={isOpen}
+      />
     </>
   );
 };
