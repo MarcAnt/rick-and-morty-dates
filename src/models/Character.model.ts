@@ -36,30 +36,10 @@ export type InitialState = {
   status: "loading" | "idle";
   error: string | null;
   characters: CharacterInfo[];
-  filters: { genders: Gender[]; species: Species[] };
+  filters: string;
   matches: CharacterInfo[];
   currentCharacter: CharacterInfo;
 };
-
-export interface FiltersBoolean {
-  species: SpeciesBoolean;
-  gender: GenderBoolean;
-}
-
-interface GenderBoolean {
-  female: boolean;
-  male: boolean;
-  genderless: boolean;
-  unknown: boolean;
-}
-
-interface SpeciesBoolean {
-  human: boolean;
-  alien: boolean;
-  mythological: boolean;
-  humanoid: boolean;
-  other: boolean;
-}
 
 export type Gender = "Female" | "Male" | "Unknown" | "Genderless";
 export type Species =

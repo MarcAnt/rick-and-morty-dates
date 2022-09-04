@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, FC, Dispatch, SetStateAction } from "react";
 import {
   Box,
   Button,
@@ -17,10 +17,11 @@ import { BiX } from "react-icons/bi";
 import {
   fetchCharacters,
   getMatches,
-  filteredCharacter,
   selectStatus,
   setMatches,
   getInfo,
+  getFilters,
+  getAllCharacters,
 } from "../app/features/characters/charactersSlice";
 import { useAppSelector } from "../app/hooks";
 import { useAppDispatch } from "../app/store";
@@ -28,48 +29,95 @@ import { CharacterInfo } from "../models";
 import { NoImage } from "../assets/images";
 import { gendersIcons, randomNum } from "../utilities";
 
-export const Card: React.FC = () => {
+export const Card: React.FC<{
+  change: boolean;
+  setChange: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ setChange, change }) => {
   const [randomNumber, setRandomNumber] = useState(0);
+  const [countPage, setCountPage] = useState(1);
   const [character, setCharacter] = useState<CharacterInfo>();
   const [isNextMatch, setIsNextMatch] = useState(false);
 
   const toast = useToast();
 
   const dispatch = useAppDispatch();
-  const currentCharacter = useAppSelector(filteredCharacter);
+  const characters = useAppSelector(getAllCharacters);
   const matches = useAppSelector(getMatches);
   const status = useAppSelector(selectStatus);
   const info = useAppSelector(getInfo);
+  const filters = useAppSelector(getFilters);
 
-  //Fetch the data
+  //reset count page after change filters
   useEffect(() => {
-    dispatch(fetchCharacters(randomNumber));
-  }, [randomNumber]);
+    dispatch(fetchCharacters({ page: randomNumber, params: filters }));
+  }, [randomNumber, filters]);
 
   //Get the filtered and current character
   useEffect(() => {
-    if (currentCharacter) {
-      setCharacter(currentCharacter);
-    }
-  }, [currentCharacter, character]);
+    const randomCharacter = randomNum(characters.length);
+    setCharacter(characters[randomCharacter]);
+  }, [characters]);
+
+  //changing filters at Main
+  useEffect(() => {
+    setRandomNumber(0);
+  }, [change]);
 
   const noMatches = async () => {
-    // const pagesTotal = info.pages;
-    setRandomNumber(randomNum(info.pages));
+    if (info.pages === countPage) setCountPage(1);
+    else setCountPage((prev) => prev + 1);
+
+    setRandomNumber(countPage);
   };
 
   const handleMatches = async () => {
     try {
-      const matched = randomNum(character ? character?.id : 10) % 2 === 0;
+      //Set a random match for liked character
+      const lastMatches: string = localStorage.getItem("latestMatch") || "[]";
+      const lastMatch = JSON.parse(lastMatches);
 
+      const matched = randomNum(character ? character?.id : 10) % 2 === 0;
       const characterMatches = { ...character, isMatch: matched };
+
+      if (Array.isArray(lastMatch) && lastMatch[0]?.id === character?.id) {
+        await new Promise((resolve, reject) => {
+          setTimeout(() => {
+            //send another random number to fetch another character
+            noMatches();
+
+            resolve(setIsNextMatch(false));
+          }, 2000);
+        });
+
+        toast({
+          position: "bottom-right",
+          isClosable: true,
+          render: () => (
+            <Flex
+              rounded={"lg"}
+              p={3}
+              bgColor={"brand.secondary"}
+              justifyContent={"space-evenly"}
+              alignItems={"center"}
+            >
+              <Text color="brand.primary" fontWeight={"bold"}>
+                Character already exist. Try again.
+              </Text>
+            </Flex>
+          ),
+        });
+
+        return;
+      }
 
       dispatch(setMatches(characterMatches));
       setIsNextMatch(true);
+
       await new Promise((resolve, reject) => {
         setTimeout(() => {
-          // createRandomPage();
+          //send another random number to fetch another character
           noMatches();
+
           resolve(setIsNextMatch(false));
         }, 2000);
       });
@@ -77,7 +125,6 @@ export const Card: React.FC = () => {
       toast({
         position: "bottom-right",
         isClosable: true,
-
         render: () => (
           <Flex
             rounded={"lg"}
@@ -108,8 +155,6 @@ export const Card: React.FC = () => {
 
   return (
     <Box
-      // bg={"white"}
-      // borderRadius={15}
       display={"flex"}
       flexDirection={{ xs: "column", sm: "column", md: "row", lg: "row" }}
       justifyContent={"space-evenly"}

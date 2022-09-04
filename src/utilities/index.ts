@@ -1,8 +1,11 @@
 import { BsGenderFemale, BsGenderMale, BsQuestionLg } from "react-icons/bs";
 import { FaGenderless } from "react-icons/fa";
 
-export const randomNum = (value: number) =>
-  Math.abs(Math.round(Math.random() * value));
+export const randomNum = (value: number): number => {
+  const random = Math.abs(Math.round(Math.random() * value));
+  if (random === 0) return 1;
+  return random;
+};
 
 /**
  *
@@ -24,6 +27,29 @@ export const addEllipses = (text: string, from?: number, to?: number) => {
   else strSliced += text;
 
   return strSliced;
+};
+
+export const createUrlParams = <K, T>(
+  typeFilter: K | string,
+  filters: T[],
+  AmpPosition?: "init" | "end" | "both",
+  initQuote?: boolean
+) => {
+  let q = `${initQuote ? "?" : ""}`;
+
+  filters.forEach((element, index) => {
+    if (index + 1 < filters.length) {
+      q += `${typeFilter}=${element}`;
+    } else {
+      q += `${typeFilter}=${element}`;
+    }
+  });
+
+  if (AmpPosition === "both") q = `&${q}&`;
+  if (AmpPosition === "init") q = `&${q}`;
+  if (AmpPosition === "end") q = `${q}&`;
+
+  return q;
 };
 
 export const gendersIcons = {

@@ -1,4 +1,4 @@
-import { extendTheme } from "@chakra-ui/react";
+import { extendTheme, withDefaultColorScheme } from "@chakra-ui/react";
 import type { ComponentStyleConfig } from "@chakra-ui/theme";
 
 const fonts = {
@@ -19,6 +19,7 @@ const styles = {
 const colors = {
   brand: {
     // primary: "#202F45",
+    main: "#26354B",
 
     primary: "#26354B",
     // secondary: "#EA580C",
@@ -27,6 +28,7 @@ const colors = {
     greenCard: "#4cae4f",
     // secondaryLight: "rgba(234, 88, 12, 0.2)",
     secondaryLight: "#E7D6C350",
+    800: "#26354B",
   },
   bgBody: {
     primary: "brand.primary",
@@ -136,6 +138,13 @@ const Button: ComponentStyleConfig = {
   },
 };
 
+const Radio: ComponentStyleConfig = {
+  baseStyle: {
+    color: "red",
+    bgColor: "red",
+  },
+};
+
 const Modal = {
   baseStyle: {
     dialog: {
@@ -145,10 +154,15 @@ const Modal = {
   },
 };
 
-export const theme = extendTheme({
-  styles,
-  colors,
-  fonts,
-  breakpoints,
-  components: { Button, Switch, Input, Modal },
-});
+export const theme = extendTheme(
+  {
+    styles,
+    colors,
+    fonts,
+    breakpoints,
+    components: { Button, Switch, Input, Modal, Radio },
+  },
+  withDefaultColorScheme({
+    colorScheme: "green",
+  })
+);

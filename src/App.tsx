@@ -22,7 +22,6 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route element={<PrivateRoute />}>
-            {/* <Route path='/user-profile' element={<ProfileScreen />} /> */}
             <Route path="/" element={<Main />} />
           </Route>
           <Route path="*" element={<PageNotFound />} />

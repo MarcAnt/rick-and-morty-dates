@@ -2,13 +2,16 @@ import axios from "axios";
 import { Characters, UserInfo } from "../models";
 
 export const CHARACTERS_URL = "https://rickandmortyapi.com/api";
+// https://rickandmortyapi.com/api/character/?page=1&gender=Female&gender=Male&species=Human
 
 export const USERS_URL = import.meta.env.DEV
   ? "https://rick-morty-match.herokuapp.com/api"
   : "http://localhost:8000/api";
 
-export const getCharacters = async (page: number) => {
-  return axios.get<Characters>(`${CHARACTERS_URL}/character?page=${page}`);
+export const getCharacters = async (page: number, params: string) => {
+  return axios.get<Characters>(
+    `${CHARACTERS_URL}/character?page=${page}${params}`
+  );
 };
 
 const config = {

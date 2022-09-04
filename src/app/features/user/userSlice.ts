@@ -22,6 +22,7 @@ const usersSlice = createSlice({
   reducers: {
     logout: (state) => {
       localStorage.removeItem("token"); // delete token from storage
+      localStorage.removeItem("latestMatch"); // delete lastest match from storage
       state.loading = false;
       state.userInfo = {} as UserInfo;
       state.token = null;

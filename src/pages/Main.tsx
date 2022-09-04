@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  filter,
   Flex,
   HStack,
   Icon,
@@ -10,116 +9,81 @@ import {
   PopoverBody,
   PopoverCloseButton,
   PopoverContent,
+  PopoverHeader,
   PopoverTrigger,
+  Radio,
+  RadioGroup,
   Stack,
-  Switch,
   Text,
   useDisclosure,
-  VStack,
 } from "@chakra-ui/react";
 
 import { SideBar, Header, Card } from "../components";
 
 import { AiFillControl, AiOutlineMenuUnfold } from "react-icons/ai";
 
-import { FiltersBoolean, Gender, Species } from "../models";
 import { filterCharacter } from "../app/features/characters/charactersSlice";
 import { useAppDispatch } from "../app/store";
 import { useCycle } from "framer-motion";
+import { createUrlParams } from "../utilities";
+import { useBoolean } from "../hooks";
 
 const Main = (): JSX.Element => {
-  const [filters, setFilters] = useState<FiltersBoolean>({
-    species: {
-      human: true,
-      alien: true,
-      mythological: true,
-      humanoid: true,
-      other: true,
-    },
-    gender: { female: true, male: true, genderless: false, unknown: false },
-  });
-
   const {
     onOpen: onOpenFilter,
     onClose: onCloseFilter,
     isOpen: isOpenFilter,
   } = useDisclosure();
 
+  const { change, setChange } = useBoolean();
+
   const [open, cycleOpen] = useCycle(false, true);
 
   const firstFieldRef = React.useRef(null);
   const dispatch = useAppDispatch();
 
+  const [genders, setGenders] = useState<string[]>(["Female"]);
+  const [species, setSpecies] = useState<string[]>(["Human"]);
+
+  const handleFiltersParams = (
+    value: string,
+    setParamsFilters: React.Dispatch<React.SetStateAction<string[]>>
+  ) => {
+    let index = species.indexOf(value);
+    if (index === -1) {
+      setParamsFilters([value]);
+      return;
+    } else {
+      setParamsFilters([]);
+    }
+  };
+
   const createFilters = () => {
-    let f: { genders: Gender[]; species: Species[] } = {
-      genders: [],
-      species: [],
-    };
+    const genderParams = createUrlParams<string, string>(
+      "gender",
+      genders,
+      "init",
+      false
+    );
 
-    //Genders
+    const speciesParam = createUrlParams<string, string>(
+      "species",
+      species,
+      "init",
+      false
+    );
 
-    if (filters.gender.female) {
-      f = { species: [...f.species], genders: [...f.genders, "Female"] };
-    }
-
-    if (filters.gender.male) {
-      f = { species: [...f.species], genders: [...f.genders, "Male"] };
-    }
-
-    if (filters.gender.genderless) {
-      f = { species: [...f.species], genders: [...f.genders, "Genderless"] };
-    }
-
-    if (filters.gender.unknown) {
-      f = { species: [...f.species], genders: [...f.genders, "Unknown"] };
-    }
-
-    //Espcies
-
-    if (filters.species.alien) {
-      f = { genders: [...f.genders], species: [...f.species, "Alien"] };
-    }
-    if (filters.species.human) {
-      f = { genders: [...f.genders], species: [...f.species, "Human"] };
-    }
-
-    if (filters.species.humanoid) {
-      f = { genders: [...f.genders], species: [...f.species, "Humanoid"] };
-    }
-
-    if (filters.species.mythological) {
-      f = {
-        genders: [...f.genders],
-        species: [...f.species, "Mythological Creature"],
-      };
-    }
-
-    if (filters.species.other) {
-      f = { genders: [...f.genders], species: [...f.species, "Others"] };
-    }
-
-    dispatch(filterCharacter(f));
+    dispatch(filterCharacter(`${genderParams}${speciesParam}`));
   };
 
   const handleFilters = () => {
+    setChange(!change);
     createFilters();
   };
 
   useEffect(() => {
-    createFilters();
-  }, [filter]);
-
-  //Control filters in popover. Almost one would be checked to Apply filters
-  const isValidFilters =
-    !filters.gender.female &&
-    !filters.gender.male &&
-    !filters.gender.genderless &&
-    !filters.gender.unknown &&
-    !filters.species.alien &&
-    !filters.species.humanoid &&
-    !filters.species.mythological &&
-    !filters.species.other &&
-    !filters.species.human;
+    handleFilters();
+  }, []);
 
   return (
     <Flex w="100%">
@@ -165,264 +129,143 @@ const Main = (): JSX.Element => {
                 borderWidth={2}
               >
                 <PopoverCloseButton color={"brand.primary"} />
+                <PopoverHeader color={"brand.primary"}>
+                  Filter Characters
+                </PopoverHeader>
                 <PopoverBody>
-                  <Text
-                    color={"brand.primary"}
-                    fontWeight={"extrabold"}
-                    fontSize="xl"
-                    mb={3}
-                  >
-                    Species
-                  </Text>
-                  <Stack direction={"row"} wrap={"wrap"}>
-                    <VStack>
-                      <Box
-                        as={"label"}
-                        color={"brand.primary"}
-                        htmlFor={"human"}
-                      >
-                        Human
-                      </Box>
-                      <Switch
-                        size="md"
-                        alignSelf={"flex-start"}
-                        id={"human"}
-                        colorScheme="secondary"
-                        isChecked={filters.species.human}
-                        onChange={(e) => {
-                          setFilters(
-                            Object.assign({}, filters, {
-                              species: {
-                                ...filters.species,
-                                human: e.target.checked,
-                              },
-                            })
-                          );
-                        }}
-                      />
-                    </VStack>
-                    <VStack>
-                      <Box
-                        as={"label"}
-                        color={"brand.primary"}
-                        htmlFor={"alien"}
-                      >
-                        Alien
-                      </Box>
-                      <Switch
-                        size="md"
-                        alignSelf={"flex-start"}
-                        id={"alien"}
-                        colorScheme="secondary"
-                        isChecked={filters.species.alien}
-                        onChange={(e) => {
-                          setFilters(
-                            Object.assign({}, filters, {
-                              species: {
-                                ...filters.species,
-                                alien: e.target.checked,
-                              },
-                            })
-                          );
-                        }}
-                      />
-                    </VStack>
-
-                    <VStack>
-                      <Box
-                        as={"label"}
-                        color={"brand.primary"}
-                        htmlFor={"humanoid"}
-                      >
-                        Humanoid
-                      </Box>
-                      <Switch
-                        size="md"
-                        alignSelf={"flex-start"}
-                        id={"humanoid"}
-                        colorScheme="secondary"
-                        isChecked={filters.species.humanoid}
-                        onChange={(e) => {
-                          setFilters(
-                            Object.assign({}, filters, {
-                              species: {
-                                ...filters.species,
-                                humanoid: e.target.checked,
-                              },
-                            })
-                          );
-                        }}
-                      />
-                    </VStack>
-
-                    <VStack>
-                      <Box
-                        as={"label"}
-                        color={"brand.primary"}
-                        htmlFor={"myth"}
-                      >
-                        Mythological
-                      </Box>
-                      <Switch
-                        size="md"
-                        alignSelf={"flex-start"}
-                        id={"myth"}
-                        colorScheme="secondary"
-                        isChecked={filters.species.mythological}
-                        onChange={(e) => {
-                          setFilters(
-                            Object.assign({}, filters, {
-                              species: {
-                                ...filters.species,
-                                mythological: e.target.checked,
-                              },
-                            })
-                          );
-                        }}
-                      />
-                    </VStack>
-                    <VStack style={{ margin: 0 }}>
-                      <Box
-                        as={"label"}
-                        color={"brand.primary"}
-                        htmlFor={"others"}
-                      >
-                        Others
-                      </Box>
-                      <Switch
-                        size="md"
-                        alignSelf={"flex-start"}
-                        id={"others"}
-                        colorScheme="secondary"
-                        isChecked={filters.species.other}
-                        onChange={(e) => {
-                          setFilters(
-                            Object.assign({}, filters, {
-                              species: {
-                                ...filters.species,
-                                other: e.target.checked,
-                              },
-                            })
-                          );
-                        }}
-                      />
-                    </VStack>
-                  </Stack>
-
-                  <Text
-                    color={"brand.primary"}
-                    fontWeight={"extrabold"}
-                    fontSize="xl"
-                    my={3}
-                  >
+                  <Text color={"brand.primary"} fontWeight={"extrabold"}>
                     Gender
                   </Text>
-                  <Stack direction={"row"} wrap={"wrap"}>
-                    <VStack>
-                      <Box
-                        as={"label"}
-                        color={"brand.primary"}
-                        htmlFor={"female"}
+
+                  <RadioGroup defaultValue="Female">
+                    <Stack
+                      direction={["column", "row"]}
+                      wrap={"wrap"}
+                      spacing={0}
+                      columnGap={2}
+                      mt={2}
+                    >
+                      <Radio
+                        value="Female"
+                        onChange={(e) =>
+                          handleFiltersParams(e.target.value, setGenders)
+                        }
                       >
-                        Female
-                      </Box>
-                      <Switch
-                        size="md"
-                        alignSelf={"flex-start"}
-                        id={"female"}
-                        colorScheme="secondary"
-                        isChecked={filters.gender.female}
-                        onChange={(e) => {
-                          setFilters(
-                            Object.assign({}, filters, {
-                              gender: {
-                                ...filters.gender,
-                                female: e.target.checked,
-                              },
-                            })
-                          );
-                        }}
-                      />
-                    </VStack>
-                    <VStack>
-                      <Box
-                        as={"label"}
-                        color={"brand.primary"}
-                        htmlFor={"male"}
+                        <Text color={"brand.primary"}>Female</Text>
+                      </Radio>
+                      <Radio
+                        value="Male"
+                        onChange={(e) =>
+                          handleFiltersParams(e.target.value, setGenders)
+                        }
                       >
-                        Male
-                      </Box>
-                      <Switch
-                        size="md"
-                        alignSelf={"flex-start"}
-                        id={"male"}
-                        colorScheme="secondary"
-                        isChecked={filters.gender.male}
-                        onChange={(e) => {
-                          setFilters(
-                            Object.assign({}, filters, {
-                              gender: {
-                                ...filters.gender,
-                                male: e.target.checked,
-                              },
-                            })
-                          );
-                        }}
-                      />
-                    </VStack>
-                    <VStack>
-                      <Box
-                        as={"label"}
-                        color={"brand.primary"}
-                        htmlFor={"genderless"}
+                        <Text color={"brand.primary"}>Male</Text>
+                      </Radio>
+                      <Radio
+                        value="Genderless"
+                        onChange={(e) =>
+                          handleFiltersParams(e.target.value, setGenders)
+                        }
                       >
-                        Genderless
-                      </Box>
-                      <Switch
-                        alignSelf={"flex-start"}
-                        size="md"
-                        id={"genderless"}
-                        colorScheme="secondary"
-                        isChecked={filters.gender.genderless}
-                        onChange={(e) => {
-                          setFilters(
-                            Object.assign({}, filters, {
-                              gender: {
-                                ...filters.gender,
-                                genderless: e.target.checked,
-                              },
-                            })
-                          );
-                        }}
-                      />
-                    </VStack>
-                    <VStack>
-                      <Box
-                        as={"label"}
-                        color={"brand.primary"}
-                        htmlFor={"unknown"}
+                        <Text color={"brand.primary"}>Genderless</Text>
+                      </Radio>
+                      <Radio
+                        value="Unknown"
+                        onChange={(e) =>
+                          handleFiltersParams(e.target.value, setGenders)
+                        }
                       >
-                        Unknown
-                      </Box>
-                      <Switch
-                        alignSelf={"flex-start"}
-                        size="md"
-                        id={"unknown"}
-                        colorScheme="secondary"
-                        isChecked={filters.gender.unknown}
-                        onChange={(e) => {
-                          setFilters(
-                            Object.assign({}, filters, {
-                              gender: {
-                                ...filters.gender,
-                                unknown: e.target.checked,
-                              },
-                            })
-                          );
-                        }}
-                      />
-                    </VStack>
-                  </Stack>
+                        <Text color={"brand.primary"}>Unknown</Text>
+                      </Radio>
+                    </Stack>
+                  </RadioGroup>
+
+                  <Text color={"brand.primary"} fontWeight={"extrabold"}>
+                    Species
+                  </Text>
+
+                  <RadioGroup defaultValue="Human">
+                    <Stack
+                      direction={["column", "row"]}
+                      wrap={"wrap"}
+                      spacing={0}
+                      columnGap={2}
+                      mt={2}
+                    >
+                      <Radio
+                        value="Human"
+                        onChange={(e) =>
+                          handleFiltersParams(e.target.value, setSpecies)
+                        }
+                      >
+                        <Text color={"brand.primary"}>Human</Text>
+                      </Radio>
+                      <Radio
+                        value="Alien"
+                        onChange={(e) =>
+                          handleFiltersParams(e.target.value, setSpecies)
+                        }
+                      >
+                        <Text color={"brand.primary"}>Alien</Text>
+                      </Radio>
+                      <Radio
+                        value="Animal"
+                        onChange={(e) =>
+                          handleFiltersParams(e.target.value, setSpecies)
+                        }
+                      >
+                        <Text color={"brand.primary"}>Animal</Text>
+                      </Radio>
+                      <Radio
+                        value="Humanoid"
+                        onChange={(e) =>
+                          handleFiltersParams(e.target.value, setSpecies)
+                        }
+                      >
+                        <Text color={"brand.primary"}>Humanoid</Text>
+                      </Radio>
+                      <Radio
+                        value="Robot"
+                        onChange={(e) =>
+                          handleFiltersParams(e.target.value, setSpecies)
+                        }
+                      >
+                        <Text color={"brand.primary"}>Robot</Text>
+                      </Radio>
+                      <Radio
+                        value="Mythological"
+                        onChange={(e) =>
+                          handleFiltersParams(e.target.value, setSpecies)
+                        }
+                      >
+                        <Text color={"brand.primary"}>Mythological</Text>
+                      </Radio>
+                      <Radio
+                        value="Cronenberg"
+                        onChange={(e) =>
+                          handleFiltersParams(e.target.value, setSpecies)
+                        }
+                      >
+                        <Text color={"brand.primary"}>Cronenberg</Text>
+                      </Radio>
+                      <Radio
+                        value="Poopybutthole"
+                        onChange={(e) =>
+                          handleFiltersParams(e.target.value, setSpecies)
+                        }
+                      >
+                        <Text color={"brand.primary"}>Poopybutthole</Text>
+                      </Radio>
+                      <Radio
+                        value="unknown"
+                        onChange={(e) =>
+                          handleFiltersParams(e.target.value, setSpecies)
+                        }
+                      >
+                        <Text color={"brand.primary"}>Unknown</Text>
+                      </Radio>
+                    </Stack>
+                  </RadioGroup>
 
                   <HStack justifyContent={"flex-end"} mt={3}>
                     <Button
@@ -444,7 +287,6 @@ const Main = (): JSX.Element => {
                         color: "brand.secondary",
                       }}
                       color={"brand.secondary"}
-                      disabled={isValidFilters}
                       onClick={() => {
                         handleFilters();
                         onCloseFilter();
@@ -462,7 +304,14 @@ const Main = (): JSX.Element => {
         </Flex>
 
         {/* Card */}
-        <Card />
+        <Box
+          h={"450px"}
+          maxH={"450px"}
+          maxW={"600px"}
+          margin={{ xs: "1rem 2rem", sm: "1rem 2rem", md: "1rem auto" }}
+        >
+          <Card change={change} setChange={setChange} />
+        </Box>
       </Box>
     </Flex>
   );
