@@ -1,13 +1,14 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Box } from "@chakra-ui/react";
-import Login from "./pages/Login";
-import Main from "./pages/Main";
-import PageNotFound from "./pages/PageNotFound";
 
-// import PublicRoute from "./router/PublicRoute";
-// import PrivateRoute from "./router/PrivateRoute";
-import SignUp from "./pages/SignUp";
+import PageNotFound from "./pages/PageNotFound";
 import PrivateRoute from "./router/PrivateRoute";
+import LoaderPage from "./components/LoaderPage";
+
+const Main = lazy(() => import("./pages/Main"));
+const Login = lazy(() => import("./pages/Login"));
+const SignUp = lazy(() => import("./pages/SignUp"));
 
 const App = () => {
   return (
@@ -18,14 +19,16 @@ const App = () => {
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route element={<PrivateRoute />}>
-            <Route path="/" element={<Main />} />
-          </Route>
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
+        <Suspense fallback={<LoaderPage />}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route element={<PrivateRoute />}>
+              <Route path="/" element={<Main />} />
+            </Route>
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </Suspense>
       </Box>
     </Box>
   );

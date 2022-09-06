@@ -28,12 +28,15 @@ import { useAppDispatch } from "../app/store";
 import { CharacterInfo } from "../models";
 import { NoImage } from "../assets/images";
 import { gendersIcons, randomNum } from "../utilities";
+import { useFetchCharacter } from "../hooks";
 
-export const Card: React.FC<{
-  change: boolean;
-  setChange: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ setChange, change }) => {
-  const [randomNumber, setRandomNumber] = useState(0);
+type CardProps = {
+  change?: string | boolean;
+  setChange?: Dispatch<SetStateAction<boolean | string>>;
+};
+
+export const Card: FC<CardProps> = () => {
+  // const [randomNumber, setRandomNumber] = useState(0);
   const [countPage, setCountPage] = useState(1);
   const [character, setCharacter] = useState<CharacterInfo>();
   const [isNextMatch, setIsNextMatch] = useState(false);
@@ -41,16 +44,18 @@ export const Card: React.FC<{
   const toast = useToast();
 
   const dispatch = useAppDispatch();
-  const characters = useAppSelector(getAllCharacters);
+  // const characters = useAppSelector(getAllCharacters);
   const matches = useAppSelector(getMatches);
   const status = useAppSelector(selectStatus);
   const info = useAppSelector(getInfo);
   const filters = useAppSelector(getFilters);
 
   //reset count page after change filters
-  useEffect(() => {
-    dispatch(fetchCharacters({ page: randomNumber, params: filters }));
-  }, [randomNumber, filters]);
+  // useEffect(() => {
+  //   dispatch(fetchCharacters({ page: randomNumber, params: filters }));
+  // }, [randomNumber]);
+
+  const characters = useFetchCharacter({ page: countPage, params: filters });
 
   //Get the filtered and current character
   useEffect(() => {
@@ -60,14 +65,17 @@ export const Card: React.FC<{
 
   //changing filters at Main
   useEffect(() => {
-    setRandomNumber(0);
-  }, [change]);
+    setCountPage(1);
+    // setRandomNumber(0);
+    // dispatch(fetchCharacters({ page: 1, params: filters }));
+    // useFetchCharacter({ page: 1, params: filters });
+  }, [filters]);
 
   const noMatches = async () => {
     if (info.pages === countPage) setCountPage(1);
     else setCountPage((prev) => prev + 1);
 
-    setRandomNumber(countPage);
+    // setRandomNumber(countPage);
   };
 
   const handleMatches = async () => {

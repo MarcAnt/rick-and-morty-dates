@@ -1,35 +1,20 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Avatar,
   Box,
   Button,
   CloseButton,
-  Collapse,
   Flex,
-  Heading,
   HStack,
   Icon,
   Image,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Stack,
-  Tag,
-  TagLabel,
   Text,
-  useBoolean,
   useDisclosure,
-  VStack,
 } from "@chakra-ui/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FaHeart, FaHeartBroken, FaSkull } from "react-icons/fa";
+import { FaHeart, FaHeartBroken } from "react-icons/fa";
 import { BiX } from "react-icons/bi";
-import { RiAliensFill } from "react-icons/ri";
-import { MdOutlineMyLocation } from "react-icons/md";
 
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
@@ -37,21 +22,20 @@ import {
   getMatches,
   removeMatch,
 } from "../app/features/characters/charactersSlice";
-import { Logo, RMToken } from "../assets/images";
+import { Logo } from "../assets/images";
 
-import { addEllipses, gendersIcons } from "../utilities";
+import { addEllipses } from "../utilities";
 import { CharacterInfo } from "../models";
 import { Footer } from "./Footer";
 import ModalMatchInfo from "./modals/ModalMatchInfo";
 import ModalTokenInfo from "./modals/ModalTokenInfo";
 
-export const SideBar = ({
-  onToggleMenu,
-  isOpenMenu,
-}: {
+type SideBarParams = {
   onToggleMenu: () => void;
   isOpenMenu: boolean;
-}) => {
+};
+
+export const SideBar = ({ onToggleMenu, isOpenMenu }: SideBarParams) => {
   const [selectedCharacter, setSelectedCharacter] = useState(
     {} as CharacterInfo
   );

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, FC } from "react";
 import {
   Alert,
   AlertIcon,
@@ -36,7 +36,7 @@ const UserScheme = z.object({
   email: z.string().email({ message: "Invalid email address" }),
 });
 
-const Login: React.FC = () => {
+const Login: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 

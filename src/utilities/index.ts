@@ -29,12 +29,17 @@ export const addEllipses = (text: string, from?: number, to?: number) => {
   return strSliced;
 };
 
-export const createUrlParams = <K, T>(
-  typeFilter: K | string,
+export const createUrlParams = <T>(
+  typeFilter: string,
   filters: T[],
   AmpPosition?: "init" | "end" | "both",
   initQuote?: boolean
 ) => {
+  if (filters.length === 0)
+    throw new Error("There is not data to create filter");
+  if (!Array.isArray(filters))
+    throw new Error("There is no data array to filter");
+
   let q = `${initQuote ? "?" : ""}`;
 
   filters.forEach((element, index) => {

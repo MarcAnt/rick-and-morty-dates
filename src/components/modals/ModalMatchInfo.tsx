@@ -23,15 +23,13 @@ import { MdOutlineMyLocation } from "react-icons/md";
 import { CharacterInfo } from "../../models";
 import { gendersIcons } from "../../utilities";
 
-const ModalMatchInfo = ({
-  characterInfo,
-  onClose,
-  isOpen,
-}: {
+type ModalParams = {
   characterInfo: CharacterInfo;
   onClose: () => void;
   isOpen: boolean;
-}) => {
+};
+
+const ModalMatchInfo = ({ characterInfo, onClose, isOpen }: ModalParams) => {
   return (
     <Modal onClose={onClose} size={"lg"} isOpen={isOpen}>
       <ModalOverlay />

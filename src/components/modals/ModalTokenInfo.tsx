@@ -12,13 +12,12 @@ import {
 
 import { RMToken } from "../../assets/images";
 
-const ModalTokenInfo = ({
-  onClose,
-  isOpen,
-}: {
+type ModalParams = {
   onClose: () => void;
   isOpen: boolean;
-}) => {
+};
+
+const ModalTokenInfo = ({ onClose, isOpen }: ModalParams) => {
   return (
     <Modal onClose={onClose} size={"lg"} isOpen={isOpen}>
       <ModalOverlay />

@@ -27,6 +27,7 @@ import { useAppDispatch } from "../app/store";
 import { useCycle } from "framer-motion";
 import { createUrlParams } from "../utilities";
 import { useBoolean } from "../hooks";
+import { Gender, Species } from "../models";
 
 const Main = (): JSX.Element => {
   const {
@@ -35,7 +36,7 @@ const Main = (): JSX.Element => {
     isOpen: isOpenFilter,
   } = useDisclosure();
 
-  const { change, setChange } = useBoolean();
+  const { change, setChange } = useBoolean("change");
 
   const [open, cycleOpen] = useCycle(false, true);
 
@@ -45,7 +46,7 @@ const Main = (): JSX.Element => {
   const [genders, setGenders] = useState<string[]>(["Female"]);
   const [species, setSpecies] = useState<string[]>(["Human"]);
 
-  const handleFiltersParams = (
+  const handleFiltersSpeciesParams = (
     value: string,
     setParamsFilters: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
@@ -58,15 +59,28 @@ const Main = (): JSX.Element => {
     }
   };
 
+  const handleFiltersGendersParams = (
+    value: string,
+    setParamsFilters: React.Dispatch<React.SetStateAction<string[]>>
+  ) => {
+    let index = genders.indexOf(value);
+    if (index === -1) {
+      setParamsFilters([value]);
+      return;
+    } else {
+      setParamsFilters([]);
+    }
+  };
+
   const createFilters = () => {
-    const genderParams = createUrlParams<string, string>(
+    const genderParams = createUrlParams<string>(
       "gender",
       genders,
       "init",
       false
     );
 
-    const speciesParam = createUrlParams<string, string>(
+    const speciesParam = createUrlParams<string>(
       "species",
       species,
       "init",
@@ -82,6 +96,7 @@ const Main = (): JSX.Element => {
   };
 
   useEffect(() => {
+    //Set filter after first render
     handleFilters();
   }, []);
 
@@ -148,7 +163,7 @@ const Main = (): JSX.Element => {
                       <Radio
                         value="Female"
                         onChange={(e) =>
-                          handleFiltersParams(e.target.value, setGenders)
+                          handleFiltersGendersParams(e.target.value, setGenders)
                         }
                       >
                         <Text color={"brand.primary"}>Female</Text>
@@ -156,7 +171,7 @@ const Main = (): JSX.Element => {
                       <Radio
                         value="Male"
                         onChange={(e) =>
-                          handleFiltersParams(e.target.value, setGenders)
+                          handleFiltersGendersParams(e.target.value, setGenders)
                         }
                       >
                         <Text color={"brand.primary"}>Male</Text>
@@ -164,7 +179,7 @@ const Main = (): JSX.Element => {
                       <Radio
                         value="Genderless"
                         onChange={(e) =>
-                          handleFiltersParams(e.target.value, setGenders)
+                          handleFiltersGendersParams(e.target.value, setGenders)
                         }
                       >
                         <Text color={"brand.primary"}>Genderless</Text>
@@ -172,7 +187,7 @@ const Main = (): JSX.Element => {
                       <Radio
                         value="Unknown"
                         onChange={(e) =>
-                          handleFiltersParams(e.target.value, setGenders)
+                          handleFiltersGendersParams(e.target.value, setGenders)
                         }
                       >
                         <Text color={"brand.primary"}>Unknown</Text>
@@ -195,7 +210,7 @@ const Main = (): JSX.Element => {
                       <Radio
                         value="Human"
                         onChange={(e) =>
-                          handleFiltersParams(e.target.value, setSpecies)
+                          handleFiltersSpeciesParams(e.target.value, setSpecies)
                         }
                       >
                         <Text color={"brand.primary"}>Human</Text>
@@ -203,7 +218,7 @@ const Main = (): JSX.Element => {
                       <Radio
                         value="Alien"
                         onChange={(e) =>
-                          handleFiltersParams(e.target.value, setSpecies)
+                          handleFiltersSpeciesParams(e.target.value, setSpecies)
                         }
                       >
                         <Text color={"brand.primary"}>Alien</Text>
@@ -211,7 +226,7 @@ const Main = (): JSX.Element => {
                       <Radio
                         value="Animal"
                         onChange={(e) =>
-                          handleFiltersParams(e.target.value, setSpecies)
+                          handleFiltersSpeciesParams(e.target.value, setSpecies)
                         }
                       >
                         <Text color={"brand.primary"}>Animal</Text>
@@ -219,7 +234,7 @@ const Main = (): JSX.Element => {
                       <Radio
                         value="Humanoid"
                         onChange={(e) =>
-                          handleFiltersParams(e.target.value, setSpecies)
+                          handleFiltersSpeciesParams(e.target.value, setSpecies)
                         }
                       >
                         <Text color={"brand.primary"}>Humanoid</Text>
@@ -227,7 +242,7 @@ const Main = (): JSX.Element => {
                       <Radio
                         value="Robot"
                         onChange={(e) =>
-                          handleFiltersParams(e.target.value, setSpecies)
+                          handleFiltersSpeciesParams(e.target.value, setSpecies)
                         }
                       >
                         <Text color={"brand.primary"}>Robot</Text>
@@ -235,7 +250,7 @@ const Main = (): JSX.Element => {
                       <Radio
                         value="Mythological"
                         onChange={(e) =>
-                          handleFiltersParams(e.target.value, setSpecies)
+                          handleFiltersSpeciesParams(e.target.value, setSpecies)
                         }
                       >
                         <Text color={"brand.primary"}>Mythological</Text>
@@ -243,7 +258,7 @@ const Main = (): JSX.Element => {
                       <Radio
                         value="Cronenberg"
                         onChange={(e) =>
-                          handleFiltersParams(e.target.value, setSpecies)
+                          handleFiltersSpeciesParams(e.target.value, setSpecies)
                         }
                       >
                         <Text color={"brand.primary"}>Cronenberg</Text>
@@ -251,7 +266,7 @@ const Main = (): JSX.Element => {
                       <Radio
                         value="Poopybutthole"
                         onChange={(e) =>
-                          handleFiltersParams(e.target.value, setSpecies)
+                          handleFiltersSpeciesParams(e.target.value, setSpecies)
                         }
                       >
                         <Text color={"brand.primary"}>Poopybutthole</Text>
@@ -259,7 +274,7 @@ const Main = (): JSX.Element => {
                       <Radio
                         value="unknown"
                         onChange={(e) =>
-                          handleFiltersParams(e.target.value, setSpecies)
+                          handleFiltersSpeciesParams(e.target.value, setSpecies)
                         }
                       >
                         <Text color={"brand.primary"}>Unknown</Text>
@@ -310,7 +325,7 @@ const Main = (): JSX.Element => {
           maxW={"600px"}
           margin={{ xs: "1rem 2rem", sm: "1rem 2rem", md: "1rem auto" }}
         >
-          <Card change={change} setChange={setChange} />
+          <Card />
         </Box>
       </Box>
     </Flex>
