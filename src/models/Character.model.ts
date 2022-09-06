@@ -47,4 +47,7 @@ export type Species =
   | "Human"
   | "Mythological Creature"
   | "Humanoid"
-  | "Others";
+  | "Robot"
+  | "Cronenberg"
+  | "Poopybutthole"
+  | "unknown";
