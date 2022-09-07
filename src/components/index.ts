@@ -5,3 +5,5 @@ export * from "./SideBar";
 export * from "./LoaderPage";
 export * from "./modals/ModalMatchInfo";
 export * from "./modals/ModalTokenInfo";
+export * from "./filtersOptions/FilterGenders";
+export * from "./filtersOptions/FilterSpecies";

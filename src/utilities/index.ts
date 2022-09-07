@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { BsGenderFemale, BsGenderMale, BsQuestionLg } from "react-icons/bs";
 import { FaGenderless } from "react-icons/fa";
 
@@ -62,4 +63,18 @@ export const gendersIcons = {
   Female: BsGenderFemale,
   Genderless: FaGenderless,
   Unknown: BsQuestionLg,
+};
+
+export const handleFiltersParams = <T>(
+  value: T,
+  setParamsFilters: Dispatch<SetStateAction<T[]>>,
+  paramsFilters: T[]
+): void => {
+  let index = paramsFilters.indexOf(value);
+  if (index === -1) {
+    setParamsFilters([value]);
+    return;
+  } else {
+    setParamsFilters([]);
+  }
 };

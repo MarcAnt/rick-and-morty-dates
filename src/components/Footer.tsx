@@ -1,7 +1,8 @@
-import { Box, Text, Link, HStack } from "@chakra-ui/react";
+import { FC } from "react";
+import { Text, HStack } from "@chakra-ui/react";
 import { Link as ReactLink } from "react-router-dom";
 
-export const Footer = () => {
+export const Footer: FC = () => {
   return (
     <HStack as="footer" my={5}>
       <Text as={"i"} color={"white"} fontWeight={"bold"}>

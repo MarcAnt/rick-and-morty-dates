@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import {
   Alert,
   AlertDescription,
@@ -35,7 +35,7 @@ const UserScheme = z.object({
   email: z.string().email({ message: "Invalid email address" }),
 });
 
-const SignUp: React.FC = (): JSX.Element => {
+const SignUp: FC = () => {
   const navigate = useNavigate();
   const {
     register,

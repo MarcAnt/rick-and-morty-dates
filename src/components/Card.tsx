@@ -30,12 +30,7 @@ import { NoImage } from "../assets/images";
 import { gendersIcons, randomNum } from "../utilities";
 import { useFetchCharacter } from "../hooks";
 
-type CardProps = {
-  change?: string | boolean;
-  setChange?: Dispatch<SetStateAction<boolean | string>>;
-};
-
-export const Card: FC<CardProps> = () => {
+export const Card: FC = () => {
   // const [randomNumber, setRandomNumber] = useState(0);
   const [countPage, setCountPage] = useState(1);
   const [character, setCharacter] = useState<CharacterInfo>();

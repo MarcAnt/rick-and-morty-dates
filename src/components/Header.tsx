@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import {
   Avatar,
@@ -18,7 +18,7 @@ import {
 } from "../app/features/characters/charactersSlice";
 import { RMToken } from "../assets/images";
 
-export const Header = () => {
+export const Header: FC = () => {
   const navigate = useNavigate();
 
   const { userInfo, token } = useAppSelector((state) => state.user);

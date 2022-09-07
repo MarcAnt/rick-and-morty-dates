@@ -16,21 +16,13 @@ export const useFetchCharacter = ({ page, params }: FetchCharactersParams) => {
 
   const characters = useAppSelector(getAllCharacters);
 
-  // useEffect(() => {
-  //   dispatch(fetchCharacters({ page, params }));
-  // }, [page, params]);
-
-  //reset count page after change filters
   useEffect(() => {
     dispatch(fetchCharacters({ page: page, params: params }));
   }, [page]);
 
-  //changing filters at Main
+  //changing filters and set to 1
   useEffect(() => {
-    // setCountPage(1);
-    // setRandomNumber(0);
     dispatch(fetchCharacters({ page: 1, params: params }));
-    // useFetchCharacter({ page: 1, params: filters });
   }, [params]);
 
   return characters;

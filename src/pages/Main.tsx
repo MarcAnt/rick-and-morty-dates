@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useRef } from "react";
 import {
   Box,
   Button,
@@ -18,7 +18,13 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
-import { SideBar, Header, Card } from "../components";
+import {
+  SideBar,
+  Header,
+  Card,
+  FilterGenders,
+  FilterSpecies,
+} from "../components";
 
 import { AiFillControl, AiOutlineMenuUnfold } from "react-icons/ai";
 
@@ -27,9 +33,8 @@ import { useAppDispatch } from "../app/store";
 import { useCycle } from "framer-motion";
 import { createUrlParams } from "../utilities";
 import { useBoolean } from "../hooks";
-import { Gender, Species } from "../models";
 
-const Main = (): JSX.Element => {
+const Main: FC = () => {
   const {
     onOpen: onOpenFilter,
     onClose: onCloseFilter,
@@ -40,7 +45,7 @@ const Main = (): JSX.Element => {
 
   const [open, cycleOpen] = useCycle(false, true);
 
-  const firstFieldRef = React.useRef(null);
+  const firstFieldRef = useRef(null);
   const dispatch = useAppDispatch();
 
   const [genders, setGenders] = useState<string[]>(["Female"]);
@@ -51,19 +56,6 @@ const Main = (): JSX.Element => {
     setParamsFilters: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
     let index = species.indexOf(value);
-    if (index === -1) {
-      setParamsFilters([value]);
-      return;
-    } else {
-      setParamsFilters([]);
-    }
-  };
-
-  const handleFiltersGendersParams = (
-    value: string,
-    setParamsFilters: React.Dispatch<React.SetStateAction<string[]>>
-  ) => {
-    let index = genders.indexOf(value);
     if (index === -1) {
       setParamsFilters([value]);
       return;
@@ -151,8 +143,11 @@ const Main = (): JSX.Element => {
                   <Text color={"brand.primary"} fontWeight={"extrabold"}>
                     Gender
                   </Text>
-
-                  <RadioGroup defaultValue="Female">
+                  <FilterGenders
+                    setParamsFilters={setGenders}
+                    paramsFilters={genders}
+                  />
+                  {/* <RadioGroup defaultValue="Female">
                     <Stack
                       direction={["column", "row"]}
                       wrap={"wrap"}
@@ -193,13 +188,18 @@ const Main = (): JSX.Element => {
                         <Text color={"brand.primary"}>Unknown</Text>
                       </Radio>
                     </Stack>
-                  </RadioGroup>
+                  </RadioGroup> */}
 
                   <Text color={"brand.primary"} fontWeight={"extrabold"}>
                     Species
                   </Text>
 
-                  <RadioGroup defaultValue="Human">
+                  <FilterSpecies
+                    setParamsFilters={setSpecies}
+                    paramsFilters={species}
+                  />
+
+                  {/* <RadioGroup defaultValue="Human">
                     <Stack
                       direction={["column", "row"]}
                       wrap={"wrap"}
@@ -280,7 +280,7 @@ const Main = (): JSX.Element => {
                         <Text color={"brand.primary"}>Unknown</Text>
                       </Radio>
                     </Stack>
-                  </RadioGroup>
+                  </RadioGroup> */}
 
                   <HStack justifyContent={"flex-end"} mt={3}>
                     <Button

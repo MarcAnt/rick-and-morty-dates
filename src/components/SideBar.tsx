@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   Avatar,
   Box,
@@ -30,12 +30,12 @@ import { Footer } from "./Footer";
 import ModalMatchInfo from "./modals/ModalMatchInfo";
 import ModalTokenInfo from "./modals/ModalTokenInfo";
 
-type SideBarParams = {
+interface SideBarParams {
   onToggleMenu: () => void;
   isOpenMenu: boolean;
-};
+}
 
-export const SideBar = ({ onToggleMenu, isOpenMenu }: SideBarParams) => {
+export const SideBar: FC<SideBarParams> = ({ onToggleMenu, isOpenMenu }) => {
   const [selectedCharacter, setSelectedCharacter] = useState(
     {} as CharacterInfo
   );
