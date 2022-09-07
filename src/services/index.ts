@@ -5,8 +5,8 @@ export const CHARACTERS_URL = "https://rickandmortyapi.com/api";
 // https://rickandmortyapi.com/api/character/?page=1&gender=Female&gender=Male&species=Human
 
 export const USERS_URL = import.meta.env.DEV
-  ? "https://rick-morty-match.herokuapp.com/api"
-  : "http://localhost:8000/api";
+  ? "http://localhost:8000/api"
+  : "https://rick-morty-match.herokuapp.com/api";
 
 export const getCharacters = async (page: number, params: string) => {
   return axios.get<Characters>(
