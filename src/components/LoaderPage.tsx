@@ -5,8 +5,8 @@ const LoaderPage = () => {
   return (
     <Box w="full" h="full">
       <Stack
-        w={"100vw"}
-        h={"100vh"}
+        w={"100%"}
+        h={"100%"}
         justifyContent={"center"}
         alignItems={"center"}
       >
