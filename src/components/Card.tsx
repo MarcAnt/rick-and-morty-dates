@@ -1,4 +1,4 @@
-import { useEffect, useState, FC, Dispatch, SetStateAction } from "react";
+import { useEffect, useState, FC } from "react";
 import {
   Box,
   Button,
@@ -15,13 +15,11 @@ import { FaHeart, FaSkull } from "react-icons/fa";
 import { BiX } from "react-icons/bi";
 
 import {
-  fetchCharacters,
   getMatches,
   selectStatus,
   setMatches,
   getInfo,
   getFilters,
-  getAllCharacters,
 } from "../app/features/characters/charactersSlice";
 import { useAppSelector } from "../app/hooks";
 import { useAppDispatch } from "../app/store";
@@ -167,6 +165,7 @@ export const Card: FC = () => {
       maxW={"600px"}
       margin={{ xs: "1rem 2rem", sm: "1rem 2rem", md: "1rem auto" }}
       boxShadow={"0 5px 10px #00000052"}
+      borderRadius={"15px"}
       position={"relative"}
     >
       <Flex
@@ -271,7 +270,11 @@ export const Card: FC = () => {
         justifyContent={"center"}
         alignItems={"center"}
         bottom={-8}
-        left={{ xs: "calc(50% - 33px)", sm: "calc(50% - 33px)" }}
+        left={{
+          xs: "calc(50% - 45px)",
+
+          sm: "calc(50% - 33px)",
+        }}
         gap={3}
       >
         <Box

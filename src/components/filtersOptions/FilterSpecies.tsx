@@ -33,6 +33,7 @@ export const FilterSpecies: FC<FilterState<string>> = ({
             <Radio
               key={specie}
               value={specie}
+              borderColor={"green"}
               onChange={(e) =>
                 handleFiltersParams<string>(
                   e.target.value,

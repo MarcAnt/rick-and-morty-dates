@@ -23,6 +23,7 @@ export const FilterGenders: FC<FilterState<string>> = ({
             <Radio
               key={gender}
               value={gender}
+              borderColor={"green"}
               onChange={(e) =>
                 handleFiltersParams<string>(
                   e.target.value,

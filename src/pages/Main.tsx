@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useRef } from "react";
+import { FC, useEffect, useState, useRef } from "react";
 import {
   Box,
   Button,
@@ -11,9 +11,6 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverTrigger,
-  Radio,
-  RadioGroup,
-  Stack,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -51,33 +48,10 @@ const Main: FC = () => {
   const [genders, setGenders] = useState<string[]>(["Female"]);
   const [species, setSpecies] = useState<string[]>(["Human"]);
 
-  const handleFiltersSpeciesParams = (
-    value: string,
-    setParamsFilters: React.Dispatch<React.SetStateAction<string[]>>
-  ) => {
-    let index = species.indexOf(value);
-    if (index === -1) {
-      setParamsFilters([value]);
-      return;
-    } else {
-      setParamsFilters([]);
-    }
-  };
-
   const createFilters = () => {
-    const genderParams = createUrlParams<string>(
-      "gender",
-      genders,
-      "init",
-      false
-    );
+    const genderParams = createUrlParams("gender", genders, "init");
 
-    const speciesParam = createUrlParams<string>(
-      "species",
-      species,
-      "init",
-      false
-    );
+    const speciesParam = createUrlParams("species", species, "init");
 
     dispatch(filterCharacter(`${genderParams}${speciesParam}`));
   };
@@ -147,48 +121,6 @@ const Main: FC = () => {
                     setParamsFilters={setGenders}
                     paramsFilters={genders}
                   />
-                  {/* <RadioGroup defaultValue="Female">
-                    <Stack
-                      direction={["column", "row"]}
-                      wrap={"wrap"}
-                      spacing={0}
-                      columnGap={2}
-                      mt={2}
-                    >
-                      <Radio
-                        value="Female"
-                        onChange={(e) =>
-                          handleFiltersGendersParams(e.target.value, setGenders)
-                        }
-                      >
-                        <Text color={"brand.primary"}>Female</Text>
-                      </Radio>
-                      <Radio
-                        value="Male"
-                        onChange={(e) =>
-                          handleFiltersGendersParams(e.target.value, setGenders)
-                        }
-                      >
-                        <Text color={"brand.primary"}>Male</Text>
-                      </Radio>
-                      <Radio
-                        value="Genderless"
-                        onChange={(e) =>
-                          handleFiltersGendersParams(e.target.value, setGenders)
-                        }
-                      >
-                        <Text color={"brand.primary"}>Genderless</Text>
-                      </Radio>
-                      <Radio
-                        value="Unknown"
-                        onChange={(e) =>
-                          handleFiltersGendersParams(e.target.value, setGenders)
-                        }
-                      >
-                        <Text color={"brand.primary"}>Unknown</Text>
-                      </Radio>
-                    </Stack>
-                  </RadioGroup> */}
 
                   <Text color={"brand.primary"} fontWeight={"extrabold"}>
                     Species
@@ -198,89 +130,6 @@ const Main: FC = () => {
                     setParamsFilters={setSpecies}
                     paramsFilters={species}
                   />
-
-                  {/* <RadioGroup defaultValue="Human">
-                    <Stack
-                      direction={["column", "row"]}
-                      wrap={"wrap"}
-                      spacing={0}
-                      columnGap={2}
-                      mt={2}
-                    >
-                      <Radio
-                        value="Human"
-                        onChange={(e) =>
-                          handleFiltersSpeciesParams(e.target.value, setSpecies)
-                        }
-                      >
-                        <Text color={"brand.primary"}>Human</Text>
-                      </Radio>
-                      <Radio
-                        value="Alien"
-                        onChange={(e) =>
-                          handleFiltersSpeciesParams(e.target.value, setSpecies)
-                        }
-                      >
-                        <Text color={"brand.primary"}>Alien</Text>
-                      </Radio>
-                      <Radio
-                        value="Animal"
-                        onChange={(e) =>
-                          handleFiltersSpeciesParams(e.target.value, setSpecies)
-                        }
-                      >
-                        <Text color={"brand.primary"}>Animal</Text>
-                      </Radio>
-                      <Radio
-                        value="Humanoid"
-                        onChange={(e) =>
-                          handleFiltersSpeciesParams(e.target.value, setSpecies)
-                        }
-                      >
-                        <Text color={"brand.primary"}>Humanoid</Text>
-                      </Radio>
-                      <Radio
-                        value="Robot"
-                        onChange={(e) =>
-                          handleFiltersSpeciesParams(e.target.value, setSpecies)
-                        }
-                      >
-                        <Text color={"brand.primary"}>Robot</Text>
-                      </Radio>
-                      <Radio
-                        value="Mythological"
-                        onChange={(e) =>
-                          handleFiltersSpeciesParams(e.target.value, setSpecies)
-                        }
-                      >
-                        <Text color={"brand.primary"}>Mythological</Text>
-                      </Radio>
-                      <Radio
-                        value="Cronenberg"
-                        onChange={(e) =>
-                          handleFiltersSpeciesParams(e.target.value, setSpecies)
-                        }
-                      >
-                        <Text color={"brand.primary"}>Cronenberg</Text>
-                      </Radio>
-                      <Radio
-                        value="Poopybutthole"
-                        onChange={(e) =>
-                          handleFiltersSpeciesParams(e.target.value, setSpecies)
-                        }
-                      >
-                        <Text color={"brand.primary"}>Poopybutthole</Text>
-                      </Radio>
-                      <Radio
-                        value="unknown"
-                        onChange={(e) =>
-                          handleFiltersSpeciesParams(e.target.value, setSpecies)
-                        }
-                      >
-                        <Text color={"brand.primary"}>Unknown</Text>
-                      </Radio>
-                    </Stack>
-                  </RadioGroup> */}
 
                   <HStack justifyContent={"flex-end"} mt={3}>
                     <Button

@@ -4,9 +4,15 @@ import { Characters, UserInfo } from "../models";
 export const CHARACTERS_URL = "https://rickandmortyapi.com/api";
 // https://rickandmortyapi.com/api/character/?page=1&gender=Female&gender=Male&species=Human
 
+// export const USERS_URL = import.meta.env.DEV
+//   ? "https://rick-morty-match.herokuapp.com/api"
+//   : "http://localhost:8000/api";
+
 export const USERS_URL = import.meta.env.DEV
-  ? "https://rick-morty-match.herokuapp.com/api"
-  : "http://localhost:8000/api";
+  ? // ? "http://localhost:8000/api"
+    "http://localhost:8000/api"
+  : // : "https://rick-morty-match.herokuapp.com/api";
+    "https://web-production-360e.up.railway.app/api";
 
 export const getCharacters = async (page: number, params: string) => {
   return axios.get<Characters>(

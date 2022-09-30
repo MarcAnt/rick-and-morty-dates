@@ -140,8 +140,7 @@ const Button: ComponentStyleConfig = {
 
 const Radio: ComponentStyleConfig = {
   baseStyle: {
-    color: "red",
-    bgColor: "red",
+    borderColor: "green",
   },
 };
 
@@ -150,6 +149,7 @@ const Modal = {
     dialog: {
       maxHeight: "calc(100vh - 50px)",
       overflowY: "auto",
+      backgroundColor: "white",
     },
   },
 };
