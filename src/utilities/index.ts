@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { BsGenderFemale, BsGenderMale, BsQuestionLg } from "react-icons/bs";
 import { FaGenderless } from "react-icons/fa";
+import { sharingInformationService } from "./subject-manager";
 
 export const randomNum = (value: number): number => {
   const random = Math.abs(Math.round(Math.random() * value));
@@ -30,32 +31,24 @@ export const addEllipses = (text: string, from?: number, to?: number) => {
   return strSliced;
 };
 
-export const createUrlParams = <T>(
+export const createUrlParams = (
   typeFilter: string,
-  filters: T[],
-  AmpPosition?: "init" | "end" | "both",
-  initQuote?: boolean
+  filters: string | string[],
+  AmpPosition?: "init" | "end" | "both"
 ) => {
   if (filters.length === 0)
     throw new Error("There is not data to create filter");
   if (!Array.isArray(filters))
     throw new Error("There is no data array to filter");
 
-  let q = `${initQuote ? "?" : ""}`;
+  let params = new URLSearchParams([[typeFilter, filters[0]]]).toString();
 
-  filters.forEach((element, index) => {
-    if (index + 1 < filters.length) {
-      q += `${typeFilter}=${element}`;
-    } else {
-      q += `${typeFilter}=${element}`;
-    }
-  });
+  if (AmpPosition === "both") params = `&${params}&`;
+  if (AmpPosition === "init") params = `&${params}`;
+  if (AmpPosition === "end") params = `${params}&`;
 
-  if (AmpPosition === "both") q = `&${q}&`;
-  if (AmpPosition === "init") q = `&${q}`;
-  if (AmpPosition === "end") q = `${q}&`;
-
-  return q;
+  // return q;
+  return params;
 };
 
 export const gendersIcons = {
