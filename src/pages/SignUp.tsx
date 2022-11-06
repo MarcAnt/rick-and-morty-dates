@@ -26,14 +26,7 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { UserInfo } from "../models";
 
 import { Footer } from "../components";
-
-const UserScheme = z.object({
-  name: z
-    .string()
-    .max(50, { message: "Must be 5 or fewer characters long" })
-    .min(5, { message: "Must be 5 or more characters long" }),
-  email: z.string().email({ message: "Invalid email address" }),
-});
+import { UserScheme } from "@/models/User.scheme";
 
 const SignUp: FC = () => {
   const navigate = useNavigate();

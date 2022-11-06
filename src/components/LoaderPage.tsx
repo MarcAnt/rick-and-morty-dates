@@ -3,13 +3,8 @@ import { HeartLogo } from "../assets/images";
 
 const LoaderPage = () => {
   return (
-    <Box w="full" h="full">
-      <Stack
-        w={"100%"}
-        h={"100%"}
-        justifyContent={"center"}
-        alignItems={"center"}
-      >
+    <Box w="full" h="100vh">
+      <Stack w="full" h="100vh" justifyContent={"center"} alignItems={"center"}>
         <Image
           src={HeartLogo}
           alt="Rick & Morty Logo heart"
