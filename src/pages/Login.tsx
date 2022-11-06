@@ -17,24 +17,14 @@ import {
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useNavigate, Link as ReactLink, useLocation } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { UserInfo } from "../models";
+import { UserInfo } from "@/models";
 
-import { Logo, HeartLogo } from "../assets/images";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { Logo, HeartLogo } from "@/assets/images";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
-import { loginUser } from "../app/features/user/userActionsSlice";
-import { Footer } from "../components";
-
-const UserScheme = z.object({
-  name: z.optional(
-    z
-      .string()
-      .max(50, { message: "Must be 5 or fewer characters long" })
-      .min(5, { message: "Must be 5 or more characters long" })
-  ),
-  email: z.string().email({ message: "Invalid email address" }),
-});
+import { loginUser } from "@/app/features/user/userActionsSlice";
+import { Footer } from "@/components";
+import { UserScheme } from "@/models/User.scheme";
 
 const Login: FC = () => {
   const navigate = useNavigate();
